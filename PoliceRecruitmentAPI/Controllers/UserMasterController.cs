@@ -21,227 +21,227 @@ using System.Globalization;
 
 namespace PoliceRecruitmentAPI.Controllers
 {
-	[Route("api/[controller]")]
-	[ApiController]
+    [Route("api/[controller]")]
+    [ApiController]
     [ExampleFilterAttribute]
     public class UserMasterController : ControllerBase
-	{
+    {
 
-		public IConfiguration _configuration;
-		private readonly ILogger<UserMasterController> _logger;
-		public readonly IUserMasterService _usermaster;
+        public IConfiguration _configuration;
+        private readonly ILogger<UserMasterController> _logger;
+        public readonly IUserMasterService _usermaster;
 
-		public UserMasterController(ILogger<UserMasterController> logger, IConfiguration configuration, IUserMasterService usermaster)
-		{
-			_logger = logger;
-			_configuration = configuration;
-			_usermaster = usermaster;
-		}
-
-
-		[HttpGet("GetAll")]
-		public async Task<IActionResult> GetAll([FromQuery]UserMasterDto user)
-		{
-			try
-			{
-
-				if (user.BaseModel == null)
-				{
-					user.BaseModel = new BaseModel();
-				}
-
-				user.BaseModel.OperationType = "GetAll";
-				var createduser = await _usermaster.UserMaster(user);
-				return createduser;
-			}
-			catch (Exception ex)
-			{
-				throw;
-			}
-		}
-
-		
-		[HttpGet("Get")]
-		public async Task<IActionResult> Get([FromQuery] UserMasterDto user)
-		{
-			
-			if (user.BaseModel == null)
-			{
-				user.BaseModel = new BaseModel();
-			}
-			
-			user.BaseModel.OperationType = "Get";
-			try
-			{
-				var parameter = await _usermaster.Get(user);
-				return parameter;
-			}
-			catch (Exception)
-			{
-				throw;
-			}
-		}
+        public UserMasterController(ILogger<UserMasterController> logger, IConfiguration configuration, IUserMasterService usermaster)
+        {
+            _logger = logger;
+            _configuration = configuration;
+            _usermaster = usermaster;
+        }
 
 
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll([FromQuery] UserMasterDto user)
+        {
+            try
+            {
 
-		[HttpPost]
-		public async Task<IActionResult> Insert([FromBody] UserMasterDto user)
-		{
-			try
-			{
-				if (user.BaseModel == null)
-				{
-					user.BaseModel = new BaseModel();
-				}
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
 
-				if (user.um_id == null)
-				{
-					user.BaseModel.OperationType = "Insert";
-				}
-				else
-				{
-					user.um_updateddate = DateTime.Now;
-					user.BaseModel.OperationType = "Update";
-				}
-				dynamic createduser = await _usermaster.UserMaster(user);
-				var outcomeidvalue = createduser.Value.Outcome.OutcomeId;
-				//if (outcomeidvalue == 1)
-				//{
-
-				//	var datavalue = createduser.Value.Outcome.OutcomeDetail;
-
-				//	await SendNo(datavalue);
-				//}
-
-				return createduser;
-			}
-			catch (Exception)
-			{
-				throw;
-			}
-		}
+                user.BaseModel.OperationType = "GetAll";
+                var createduser = await _usermaster.UserMaster(user);
+                return createduser;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
 
 
-		[HttpGet("Shuffle")]
-		public async Task<IActionResult> Shuffle([FromQuery] UserMasterDto user)
-		{
-			try
-			{
-				
+        [HttpGet("Get")]
+        public async Task<IActionResult> Get([FromQuery] UserMasterDto user)
+        {
 
-				if (user.BaseModel == null)
-				{
-					user.BaseModel = new BaseModel();
-				}
-				user.BaseModel.OperationType = "Shuffle";
-				
-				dynamic createduser = await _usermaster.UserMaster(user);
-				var outcomeidvalue = createduser.Value.Outcome.OutcomeId;
+            if (user.BaseModel == null)
+            {
+                user.BaseModel = new BaseModel();
+            }
 
-
-				return createduser;
-			}
-			catch (Exception)
-			{
-				throw;
-			}
-		}
-		private async Task SendNo(dynamic datavalue2)
-		{
-
-			string[] parts = datavalue2.Split(';');
-			string userpassword = "";
-			string username = "";
-			string title = "Login Credentials";
-			string email = "";
-			if (parts.Length == 3)
-			{
-				userpassword = parts[0]; // Extract the password part
-				email = parts[1];    // Extract the email part
-				username = parts[2];    // Extract the email part
-
-				// Now you can use the password and email variables as needed
-
-			}
-			string htmlContent = "<div style=\"font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;\">" +
-						"<div style=\"max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">" +
-							"<div style=\"text-align: center;\">" +
-								"<h1 style=\"margin: 0; font-size: 28px;\">LMS</h1>" +
-							"</div>" +
-							"<div style=\"text-align: center; margin-top: 20px;\">" +
-								"<h2 style=\"margin: 0;\">Get started</h2>" +
-								"<p style=\"margin: 10px 0; font-size: 16px;\">Your account has been created on the LMS. Below are your system generated credentials.</p>" +
-								"<p style=\"margin: 10px 0; font-size: 16px;\">Please use this credentials for login</p>" +
-								"<div style=\"text-align: center; margin-top: 20px;\">" +
-									"<p style=\"margin: 5px 0; font-size: 16px;\"><strong>Username:</strong> " + username + " </p>" +
-									"<p style=\"margin: 5px 0; font-size: 16px;\"><strong>Password:</strong> " + userpassword + " </p>" +
-								"</div>" +
-
-							"</div>" +
-						"</div>" +
-					"</div>";
-
-			// Split email addresses
-			EmailConfigureDto user = new EmailConfigureDto();
-			dynamic emailDetails = await _usermaster.GetEmailId(user);
+            user.BaseModel.OperationType = "Get";
+            try
+            {
+                var parameter = await _usermaster.Get(user);
+                return parameter;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
 
 
+        [HttpPost]
+        public async Task<IActionResult> Insert([FromBody] UserMasterDto user)
+        {
+            try
+            {
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+
+                if (user.um_id == null)
+                {
+                    user.BaseModel.OperationType = "Insert";
+                }
+                else
+                {
+                    user.um_updateddate = DateTime.Now;
+                    user.BaseModel.OperationType = "Update";
+                }
+                dynamic createduser = await _usermaster.UserMaster(user);
+                var outcomeidvalue = createduser.Value.Outcome.OutcomeId;
+                //if (outcomeidvalue == 1)
+                //{
+
+                //	var datavalue = createduser.Value.Outcome.OutcomeDetail;
+
+                //	await SendNo(datavalue);
+                //}
+
+                return createduser;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
 
-			if (emailDetails != null)
-			{
-				// Use the retrieved email configuration details to send the email
-				var message = new MimeMessage();
-				message.From.Add(new MailboxAddress("Rensa Tubes", emailDetails.Value.Data.email)); // set your email
-				message.To.Add(new MailboxAddress(null, email.Trim()));
-
-				message.Subject = title;
-				var bodyBuilder = new BodyBuilder();
-				bodyBuilder.HtmlBody = htmlContent;
-				message.Body = bodyBuilder.ToMessageBody();
-
-				try
-				{
-					using (var client = new SmtpClient())
-					{
-						// Connect to the SMTP server and send the email
-						client.Connect(emailDetails.Value.Data.smtp_server, emailDetails.Value.Data.smtp_port, false);
-						client.Authenticate(emailDetails.Value.Data.email, emailDetails.Value.Data.password);
-						client.Send(message);
-						client.Disconnect(true);
-					}
-				}
-				catch (Exception ex)
-				{
-					// Handle SMTP client errors
-					Console.WriteLine($"Failed to send email: {ex.Message}");
-				}
-			}
-			else
-			{
-				// Handle case where email configuration details are not found
-				Console.WriteLine("Email configuration details not found.");
-			}
-
-			
-
-		}
+        [HttpGet("Shuffle")]
+        public async Task<IActionResult> Shuffle([FromQuery] UserMasterDto user)
+        {
+            try
+            {
 
 
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "Shuffle";
 
-		[HttpPost("Delete")]
-		public async Task<IActionResult> Delete([FromBody] UserMasterDto user)
-		{
-			if (user.BaseModel == null)
-			{
-				user.BaseModel = new BaseModel();
-			}
+                dynamic createduser = await _usermaster.UserMaster(user);
+                var outcomeidvalue = createduser.Value.Outcome.OutcomeId;
 
-			user.BaseModel.OperationType = "Delete";
-			var usertDetails = await _usermaster.UserMaster(user);
-			return usertDetails;
-		}
+
+                return createduser;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private async Task SendNo(dynamic datavalue2)
+        {
+
+            string[] parts = datavalue2.Split(';');
+            string userpassword = "";
+            string username = "";
+            string title = "Login Credentials";
+            string email = "";
+            if (parts.Length == 3)
+            {
+                userpassword = parts[0]; // Extract the password part
+                email = parts[1];    // Extract the email part
+                username = parts[2];    // Extract the email part
+
+                // Now you can use the password and email variables as needed
+
+            }
+            string htmlContent = "<div style=\"font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;\">" +
+                        "<div style=\"max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">" +
+                            "<div style=\"text-align: center;\">" +
+                                "<h1 style=\"margin: 0; font-size: 28px;\">LMS</h1>" +
+                            "</div>" +
+                            "<div style=\"text-align: center; margin-top: 20px;\">" +
+                                "<h2 style=\"margin: 0;\">Get started</h2>" +
+                                "<p style=\"margin: 10px 0; font-size: 16px;\">Your account has been created on the LMS. Below are your system generated credentials.</p>" +
+                                "<p style=\"margin: 10px 0; font-size: 16px;\">Please use this credentials for login</p>" +
+                                "<div style=\"text-align: center; margin-top: 20px;\">" +
+                                    "<p style=\"margin: 5px 0; font-size: 16px;\"><strong>Username:</strong> " + username + " </p>" +
+                                    "<p style=\"margin: 5px 0; font-size: 16px;\"><strong>Password:</strong> " + userpassword + " </p>" +
+                                "</div>" +
+
+                            "</div>" +
+                        "</div>" +
+                    "</div>";
+
+            // Split email addresses
+            EmailConfigureDto user = new EmailConfigureDto();
+            dynamic emailDetails = await _usermaster.GetEmailId(user);
+
+
+
+
+
+            if (emailDetails != null)
+            {
+                // Use the retrieved email configuration details to send the email
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress("Rensa Tubes", emailDetails.Value.Data.email)); // set your email
+                message.To.Add(new MailboxAddress(null, email.Trim()));
+
+                message.Subject = title;
+                var bodyBuilder = new BodyBuilder();
+                bodyBuilder.HtmlBody = htmlContent;
+                message.Body = bodyBuilder.ToMessageBody();
+
+                try
+                {
+                    using (var client = new SmtpClient())
+                    {
+                        // Connect to the SMTP server and send the email
+                        client.Connect(emailDetails.Value.Data.smtp_server, emailDetails.Value.Data.smtp_port, false);
+                        client.Authenticate(emailDetails.Value.Data.email, emailDetails.Value.Data.password);
+                        client.Send(message);
+                        client.Disconnect(true);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle SMTP client errors
+                    Console.WriteLine($"Failed to send email: {ex.Message}");
+                }
+            }
+            else
+            {
+                // Handle case where email configuration details are not found
+                Console.WriteLine("Email configuration details not found.");
+            }
+
+
+
+        }
+
+
+
+        [HttpPost("Delete")]
+        public async Task<IActionResult> Delete([FromBody] UserMasterDto user)
+        {
+            if (user.BaseModel == null)
+            {
+                user.BaseModel = new BaseModel();
+            }
+
+            user.BaseModel.OperationType = "Delete";
+            var usertDetails = await _usermaster.UserMaster(user);
+            return usertDetails;
+        }
 
 
 
@@ -390,7 +390,7 @@ namespace PoliceRecruitmentAPI.Controllers
                 user.BaseModel = new BaseModel();
             }
 
-            
+
 
             if (file == null || file.Length == 0)
             {
@@ -410,7 +410,7 @@ namespace PoliceRecruitmentAPI.Controllers
             List<string> errorLog = new List<string>();
             HashSet<string> usernamesSeen = new HashSet<string>();  // Track seen usernames
             HashSet<string> BukkelNosSeen = new HashSet<string>();
-             
+
             user.BaseModel.OperationType = "ExistingCandidateUserName";
             dynamic existingUsernames1 = await _usermaster.UserMaster(user);
 
@@ -439,7 +439,7 @@ namespace PoliceRecruitmentAPI.Controllers
                 }
             }
 
-            
+
 
             using (var stream = new MemoryStream())
             {
@@ -480,9 +480,14 @@ namespace PoliceRecruitmentAPI.Controllers
                                 }
 
                                 string username = dataRow["User Name"]?.ToString()?.Trim();
+                                if (string.IsNullOrEmpty(username))
+                                {
+                                    errorLog.Add($"BlankUserName :{username}");
+                                }
+                                else
                                 if (usernamesSeen.Contains(username) || existingUsernames.Contains(username))
                                 {
-                                    errorLog.Add($"Duplicate Username found: {username}");
+                                    errorLog.Add($"DuplicateUsername : {username}");
                                 }
                                 else
                                 {
@@ -490,15 +495,20 @@ namespace PoliceRecruitmentAPI.Controllers
                                 }
 
                                 string BukkelNo = dataRow["Bukkel No"]?.ToString()?.Trim();
-                                if (BukkelNosSeen.Contains(BukkelNo) || existingBukkelNos.Contains(username))
+                                if (string.IsNullOrEmpty(BukkelNo))
                                 {
-                                    errorLog.Add($"Duplicate BukkelNo found: {BukkelNo}");
+                                    errorLog.Add($"BlankBukkelNo :{BukkelNo}");
+                                }
+                                else
+                                if (BukkelNosSeen.Contains(BukkelNo) || existingBukkelNos.Contains(BukkelNo))
+                                {
+                                    errorLog.Add($"DuplicateBukkelNo : {BukkelNo}");
                                 }
                                 else
                                 {
                                     BukkelNosSeen.Add(BukkelNo);
                                 }
-                                 
+
 
                                 dataTable.Rows.Add(dataRow);
                             }
@@ -556,9 +566,14 @@ namespace PoliceRecruitmentAPI.Controllers
                             }
 
                             string username = dataRow["User Name"]?.ToString()?.Trim();
+                            if (string.IsNullOrEmpty(username))
+                            {
+                                errorLog.Add($"BlankUserName :{username}");
+                            }
+                            else
                             if (usernamesSeen.Contains(username) || existingUsernames.Contains(username))
                             {
-                                errorLog.Add($"Duplicate Username found: {username}");
+                                errorLog.Add($"DuplicateUsername: {username}");  //
                             }
                             else
                             {
@@ -566,9 +581,14 @@ namespace PoliceRecruitmentAPI.Controllers
                             }
 
                             string BukkelNo = dataRow["Bukkel No"]?.ToString()?.Trim();
-                            if (BukkelNosSeen.Contains(BukkelNo) || existingBukkelNos.Contains(username))
+                            if (string.IsNullOrEmpty(BukkelNo))
                             {
-                                errorLog.Add($"Duplicate BukkelNo found: {BukkelNo}");
+                                errorLog.Add($"BlankBukkelNo :{BukkelNo}");
+                            }
+                            else
+                           if (BukkelNosSeen.Contains(BukkelNo) || existingBukkelNos.Contains(BukkelNo))
+                            {
+                                errorLog.Add($"DuplicateBukkelNo: {BukkelNo}");
                             }
                             else
                             {
@@ -581,11 +601,24 @@ namespace PoliceRecruitmentAPI.Controllers
                     }
                 }
             }
+            var duplicateUsername = errorLog.Where(e => e.Contains("DuplicateUsername")).ToList();
+            var duplicateBukkelNo = errorLog.Where(e => e.Contains("DuplicateBukkelNo")).ToList();
+            var blankUserName = errorLog.Where(e => e.Contains("BlankUserName")).ToList();
+            var blankBukkelNo = errorLog.Where(e => e.Contains("BlankBukkelNo")).ToList();
+
             if (errorLog.Any())
             {
-                return StatusCode(409, new Outcome { OutcomeId = 4, OutcomeDetail = string.Join("; ", errorLog) });
-                // Return error log if any duplicates were found
-                //return Ok(new Outcome { OutcomeId = 4, OutcomeDetail = string.Join("; ", errorLog) });
+                var response = new
+                {
+                    OutcomeId = 4,
+                    DuplicateUsernameErrors = duplicateUsername,
+                    DuplicateBukkelNoErrors = duplicateBukkelNo,
+                    BlankUserNameErrors = blankUserName,
+                    BlankBukkelNoErrors = blankBukkelNo
+                };
+                return StatusCode(409, response);
+                //return StatusCode(409, new Outcome { OutcomeId = 4, OutcomeDetail = string.Join("; ", errorLog) });
+
             }
             user.BaseModel.OperationType = "InsertData";
             user.DataTable = dataTable;
@@ -677,12 +710,12 @@ namespace PoliceRecruitmentAPI.Controllers
         public IActionResult DownloadExcel()
         {
             // Define the column names for the Excel file
-            string[] columnNames = { "um_user_name",  "um_staffname", "um_bukkel_no", "um_post", "um_phone_no" };
+            string[] columnNames = { "um_user_name", "um_staffname", "um_bukkel_no", "um_post", "um_phone_no" };
 
             // Set EPPlus LicenseContext to NonCommercial (or Commercial if applicable)
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-           
+
             using (var package = new ExcelPackage())
             {
                 // Add a new worksheet
