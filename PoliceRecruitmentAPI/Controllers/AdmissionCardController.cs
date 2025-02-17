@@ -1,8 +1,11 @@
 ﻿using common;
+using DocumentFormat.OpenXml.EMMA;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using PoliceRecruitmentAPI.Core.ModelDtos;
 using PoliceRecruitmentAPI.Services.Interfaces;
+using System.Globalization;
 
 namespace PoliceRecruitmentAPI.Controllers
 {
@@ -15,7 +18,8 @@ namespace PoliceRecruitmentAPI.Controllers
 		private readonly ILogger<AdmissionCardController> _logger;
 		public readonly IAdmissionCardService _candidateService;
 
-		public AdmissionCardController(ILogger<AdmissionCardController> logger, IConfiguration configuration, IAdmissionCardService candidateService)
+       
+        public AdmissionCardController(ILogger<AdmissionCardController> logger, IConfiguration configuration, IAdmissionCardService candidateService)
 		{
 			_logger = logger;
 			_configuration = configuration;
@@ -27,8 +31,8 @@ namespace PoliceRecruitmentAPI.Controllers
         {
 			try
 			{
-				
-				if (model.BaseModel == null)
+
+                if (model.BaseModel == null)
 				{
 					model.BaseModel = new BaseModel();
 				}
@@ -39,10 +43,32 @@ namespace PoliceRecruitmentAPI.Controllers
 				return userDetail;
 
 			}
-			catch (Exception ex)
-			{
-				return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
-			}
-		}
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp =  DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model.BaseModel?.OperationType ?? "Unknown"
+                };
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                                   LogErrorResponse.SEPARATOR_LINE,
+                                   errorResponse.ErrorId,
+                                    errorResponse.FormattedTimestamp,
+                                   errorResponse.Message,
+                                   errorResponse.StackTrace,
+                                   LogErrorResponse.SEPARATOR_LINE
+                               );
+
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
 	}
 }

@@ -6,6 +6,7 @@ using PoliceRecruitmentAPI.Core.ModelDtos;
 using PoliceRecruitmentAPI.Services.ApiServices;
 using PoliceRecruitmentAPI.Services.Interfaces;
 using System.Data;
+using System.Globalization;
 
 namespace PoliceRecruitmentAPI.Controllers
 {
@@ -65,9 +66,32 @@ namespace PoliceRecruitmentAPI.Controllers
                 var result = await _recruitmentEventService.Get(user);
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
 
         }
@@ -116,9 +140,32 @@ namespace PoliceRecruitmentAPI.Controllers
                 var result = await _recruitmentEventService.Get(user);
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
 
         }
@@ -142,19 +189,42 @@ namespace PoliceRecruitmentAPI.Controllers
 				return userDetail;
 
 			}
-			catch (Exception ex)
-			{
-				return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
-			}
-		}
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
 
         
             [HttpGet("GetAllEvent")]
         public async Task<IActionResult> GetAllEvent([FromQuery] string userid, [FromQuery] string recruitid, string categoryid,string eventUnit)
         {
+            RecruitmentEventDto model = new RecruitmentEventDto();
             try
             {
-                RecruitmentEventDto model = new RecruitmentEventDto();
+              
                 model.UserId = userid;
                 model.recConfId = recruitid;
                 model.categoryId = categoryid.ToString();
@@ -172,13 +242,37 @@ namespace PoliceRecruitmentAPI.Controllers
             }
             catch (Exception ex)
             {
-                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
         [HttpGet("GetAllRecruitEvent")]
         public async Task<IActionResult> GetAllRecruitEvent([FromQuery] string userid, [FromQuery] string recruitid,string sessionid, string ipaddress)//, [FromQuery] string categoryid = null)
         {
+            RecruitmentEventDto model=null;
             try
             {
                 if (sessionid == null)
@@ -187,7 +281,7 @@ namespace PoliceRecruitmentAPI.Controllers
                     ipaddress= "null";
                 }
 
-                RecruitmentEventDto model = new RecruitmentEventDto
+                model = new RecruitmentEventDto
                 {
                     UserId = userid,
                     recConfId = recruitid,
@@ -209,8 +303,30 @@ namespace PoliceRecruitmentAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred in GetAllRecruitEvent");
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "An error occurred while processing your request." });
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -218,9 +334,10 @@ namespace PoliceRecruitmentAPI.Controllers
         [HttpGet("GetAllRecruitEvent1")]
         public async Task<IActionResult> GetAllRecruitEvent1([FromQuery] string userid, [FromQuery] string recruitid, string categoryid)
         {
+            RecruitmentEventDto model = new RecruitmentEventDto();
             try
             {
-                RecruitmentEventDto model = new RecruitmentEventDto();
+              
                 model.UserId = userid;
                 model.recConfId = recruitid;
                 model.categoryId = categoryid.ToString();
@@ -237,7 +354,30 @@ namespace PoliceRecruitmentAPI.Controllers
             }
             catch (Exception ex)
             {
-                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -259,11 +399,33 @@ namespace PoliceRecruitmentAPI.Controllers
 				return userDetail;
 
 			}
-			catch (Exception ex)
-			{
-				return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
-			}
-		}
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
 
 		[HttpPost("Delete")]
 		public async Task<IActionResult> Delete([FromBody] RecruitmentEventDto model)
@@ -280,11 +442,34 @@ namespace PoliceRecruitmentAPI.Controllers
 				var result = await _recruitmentEventService.RecruitEvent(model);
 				return result;
 			}
-			catch (Exception)
-			{
-				throw;
-			}
-		}
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
 
         [HttpPost("DeleteEvent")]
         public async Task<IActionResult> DeleteEvent([FromBody] RecruitmentEventDto model)
@@ -301,18 +486,42 @@ namespace PoliceRecruitmentAPI.Controllers
                 var result = await _recruitmentEventService.RecruitEvent(model);
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
         [HttpGet("GetAllEventSignature")]
         public async Task<IActionResult> GetAllEventSignature([FromQuery]  string userId, [FromQuery] string RecruitId, [FromQuery]  string groupid)
         {
+            RecruitmentEventDto model = new RecruitmentEventDto();
             try
             {
-                RecruitmentEventDto model=new RecruitmentEventDto();
+         
                 model.UserId=userId;
                 model.recConfId = RecruitId;
                 model.groupid=groupid;
@@ -329,7 +538,30 @@ namespace PoliceRecruitmentAPI.Controllers
             }
             catch (Exception ex)
             {
-                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -363,9 +595,32 @@ namespace PoliceRecruitmentAPI.Controllers
                 var result = await _recruitmentEventService.GetSign(user);
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
 
         }
