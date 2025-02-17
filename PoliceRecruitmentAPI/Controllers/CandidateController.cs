@@ -8,30 +8,26 @@ using PoliceRecruitmentAPI.Core.ModelDtos;
 using PoliceRecruitmentAPI.Services.ApiServices;
 using PoliceRecruitmentAPI.Services.Interfaces;
 using System.Data;
-using System.Formats.Asn1;
 using System.Globalization;
-using CsvHelper;
-using CsvHelper.Configuration;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
 
 namespace PoliceRecruitmentAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    [ExampleFilterAttribute]
-    public class CandidateController : ControllerBase
-    {
-        public IConfiguration _configuration;
-        private readonly ILogger<CandidateController> _logger;
-        public readonly ICandidateService _candidateService;
+	[Route("api/[controller]")]
+	[ApiController]
+	[ExampleFilterAttribute]
+	public class CandidateController : ControllerBase
+	{
+		public IConfiguration _configuration;
+		private readonly ILogger<CandidateController> _logger;
+		public readonly ICandidateService _candidateService;
         public readonly IRecruitmentEventService _recruitmentEventService;
 
         public CandidateController(ILogger<CandidateController> logger, IConfiguration configuration, ICandidateService candidateService, IRecruitmentEventService recruitmentEventService)
-        {
-            _logger = logger;
-            _configuration = configuration;
-            _candidateService = candidateService;
+		{
+			_logger = logger;
+			_configuration = configuration;
+			_candidateService = candidateService;
             _recruitmentEventService = recruitmentEventService;
         }
 
@@ -59,54 +55,125 @@ namespace PoliceRecruitmentAPI.Controllers
                 var createduser = await _candidateService.Candidate(user);
                 return createduser;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
         [HttpGet("GetCandidate")]
-        public async Task<IActionResult> GetCandidate([FromQuery] CandidateDto model)
-        {
-            try
-            {
+		public async Task<IActionResult> GetCandidate([FromQuery] CandidateDto model)
+		{
+			try
+			{
+				
+				if (model.BaseModel == null)
+				{
+					model.BaseModel = new BaseModel();
+				}
+				model.BaseModel.OperationType = "Get";
 
-                if (model.BaseModel == null)
-                {
-                    model.BaseModel = new BaseModel();
-                }
-                model.BaseModel.OperationType = "Get";
+				dynamic userDetail = await _candidateService.Get(model);
 
-                dynamic userDetail = await _candidateService.Get(model);
+				return userDetail;
 
-                return userDetail;
-
-            }
+			}
             catch (Exception ex)
             {
-                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
-        [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll([FromQuery] CandidateDto model)
-        {
-            try
-            {
+		[HttpGet("GetAll")]
+		public async Task<IActionResult> GetAll([FromQuery]CandidateDto model)
+		{
+			try
+			{
+				
+				if (model.BaseModel == null)
+				{
+					model.BaseModel = new BaseModel();
+				}
+				model.BaseModel.OperationType = "GetAll";
 
-                if (model.BaseModel == null)
-                {
-                    model.BaseModel = new BaseModel();
-                }
-                model.BaseModel.OperationType = "GetAll";
+				dynamic userDetail = await _candidateService.Candidate(model);
+				return userDetail;
 
-                dynamic userDetail = await _candidateService.Candidate(model);
-                return userDetail;
-
-            }
+			}
             catch (Exception ex)
             {
-                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -129,7 +196,30 @@ namespace PoliceRecruitmentAPI.Controllers
             }
             catch (Exception ex)
             {
-                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                 };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -151,41 +241,88 @@ namespace PoliceRecruitmentAPI.Controllers
             }
             catch (Exception ex)
             {
-                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
         [HttpGet("GetAllChestNo")]
-        public async Task<IActionResult> GetAllChestNo([FromQuery] CandidateDto model)
-        {
-            try
-            {
+		public async Task<IActionResult> GetAllChestNo([FromQuery] CandidateDto model)
+		{
+			try
+			{
 
-                if (model.BaseModel == null)
-                {
-                    model.BaseModel = new BaseModel();
-                }
-                model.BaseModel.OperationType = "GetAllChestNo";
+				if (model.BaseModel == null)
+				{
+					model.BaseModel = new BaseModel();
+				}
+				model.BaseModel.OperationType = "GetAllChestNo";
 
-                dynamic userDetail = await _candidateService.Candidate(model);
-                return userDetail;
+				dynamic userDetail = await _candidateService.Candidate(model);
+				return userDetail;
 
-            }
+			}
             catch (Exception ex)
             {
-                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
-
+		
 
         [HttpGet("GetAllValue")]
-        public async Task<IActionResult> GetAllValue([FromQuery] CandidateDto model)
+        public async Task<IActionResult> GetAllValue([FromQuery]CandidateDto model)
         {
-
+            
             try
             {
-
+               
                 if (model.BaseModel == null)
                 {
                     model.BaseModel = new BaseModel();
@@ -193,8 +330,8 @@ namespace PoliceRecruitmentAPI.Controllers
                 model.BaseModel.OperationType = "GetAllValue";
 
                 dynamic userDetail = await _candidateService.Candidate1(model);
-
-                string RecruitId = model.RecruitId;
+ 
+                 string RecruitId = model.RecruitId;
 
                 string UserId = model.UserId;
                 var recruitmentEventDto = new RecruitmentEventDto
@@ -241,7 +378,31 @@ namespace PoliceRecruitmentAPI.Controllers
             }
             catch (Exception ex)
             {
-                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -307,8 +468,30 @@ namespace PoliceRecruitmentAPI.Controllers
             }
             catch (Exception ex)
             {
-                // Return a consistent ObjectResult for errors
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -370,8 +553,30 @@ namespace PoliceRecruitmentAPI.Controllers
             }
             catch (Exception ex)
             {
-                // Handle exceptions and return a meaningful error message
-                return new JsonResult(new { message = ex.Message })
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+
+
+                // Return structured error response
+                return new JsonResult(errorResponse)
                 {
                     StatusCode = StatusCodes.Status500InternalServerError
                 };
@@ -487,7 +692,33 @@ namespace PoliceRecruitmentAPI.Controllers
             }
             catch (Exception ex)
             {
-                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+
+
+                // Return structured error response
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -516,9 +747,10 @@ namespace PoliceRecruitmentAPI.Controllers
         [HttpGet("GetPassCandidate")]
         public async Task<IActionResult> GetPassCandidate()
         {
+            CandidateDto model = new CandidateDto();
             try
             {
-                CandidateDto model = new CandidateDto();
+               
                 if (model.BaseModel == null)
                 {
                     model.BaseModel = new BaseModel();
@@ -531,11 +763,36 @@ namespace PoliceRecruitmentAPI.Controllers
             }
             catch (Exception ex)
             {
-                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+
+                // Return structured error response
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
-
+     
         [HttpPost("upload")]
         public async Task<IActionResult> UploadExcel(IFormFile file, [FromForm] string userId, [FromForm] string RecruitId)
         {
@@ -628,19 +885,12 @@ namespace PoliceRecruitmentAPI.Controllers
         public async Task<IActionResult> uploadCandidateNew(IFormFile file, [FromForm] string userId, [FromForm] string RecruitId)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-
-            CandidateDto user = new CandidateDto();
-            if (user.BaseModel == null)
-            {
-                user.BaseModel = new BaseModel();
-            }
-
+            CandidateDto user = new CandidateDto { BaseModel = new BaseModel { OperationType = "InsertDataNewCandidate" } };
             user.UserId = userId;
             user.RecruitId = RecruitId;
-
             if (file == null || file.Length == 0)
             {
-                return StatusCode(422, new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
+                return Ok(new Outcome { OutcomeId = 0, OutcomeDetail = "No data in the excel!" });
             }
 
             string[] allowedFileExtensions = { ".xls", ".xlsx", ".xlsm", ".csv" };
@@ -651,264 +901,76 @@ namespace PoliceRecruitmentAPI.Controllers
             }
 
             DataTable dataTable2 = new DataTable();
-            List<string> errorLog = new List<string>();
-
-            HashSet<string> mobilenosSeen = new HashSet<string>();
-            HashSet<string> applicationNosSeen = new HashSet<string>();
-            
-            // Fetch existing MobileNos and ApplicationNos (as done in your code)
-            user.BaseModel.OperationType = "ExistingCandidateMobileNo";
-            dynamic existingMobileNo = await _candidateService.Candidate(user);
-
-            HashSet<string> existingMobileNos = new HashSet<string>();
-            foreach (var mobilenoObj in existingMobileNo.Value.Data)
-            {
-                string mobileNo = mobilenoObj.MobileNumber?.ToString().Trim();
-                if (!string.IsNullOrEmpty(mobileNo))
-                {
-                    existingMobileNos.Add(mobileNo);
-                }
-            }
-
-            user.BaseModel.OperationType = "ExistingCandidateApplicationNo";
-            dynamic existingApplicationNo1 = await _candidateService.Candidate(user);
-
-            HashSet<string> existingApplicationNo = new HashSet<string>();
-            foreach (var applicationObj in existingApplicationNo1.Value.Data)
-            {
-                string applicationNo = applicationObj.ApplicationNo?.ToString().Trim();
-                if (!string.IsNullOrEmpty(applicationNo))
-                {
-                    existingApplicationNo.Add(applicationNo);
-                }
-            }
 
             using (var stream = new MemoryStream())
             {
                 await file.CopyToAsync(stream);
                 stream.Position = 0;
 
+                MemoryStream convertedStream = new MemoryStream();
                 if (Path.GetExtension(file.FileName).Equals(".csv", StringComparison.OrdinalIgnoreCase))
                 {
-                    using (var reader = new StreamReader(stream))
-                    using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
-                    {
-                        Quote = '"',
-                        Delimiter = ",",
-                        BadDataFound = null // To ignore invalid data rows
-                    }))
-                    {
-                        var records = csv.GetRecords<dynamic>().ToList();
-
-                        if (records.Any())
-                        {
-                            var header = ((IDictionary<string, object>)records[0]).Keys.ToList();
-                            foreach (var column in header)
-                            {
-                                dataTable2.Columns.Add(new DataColumn(column, typeof(string)));
-                            }
-
-                            foreach (var record in records)
-                            {
-                                var dataRow = dataTable2.NewRow();
-                                foreach (var column in header)
-                                {
-                                    dataRow[column] = ((IDictionary<string, object>)record)[column]?.ToString();
-                                }
-
-                                string genders = dataRow["Gender"]?.ToString()?.Trim();
-                                if (string.IsNullOrEmpty(genders))
-                                {
-                                    errorLog.Add($"Gender :{genders}");
-                                }
-                                else
-                                {
-                                    applicationNosSeen.Add(genders);
-                                }
-
-                                string parallelreservation = dataRow["Parallel Reservation"]?.ToString()?.Trim();
-                                if (string.IsNullOrEmpty(parallelreservation))
-                                {
-                                    errorLog.Add($"ParallelReservation :{parallelreservation}");
-                                }
-                                else
-                                {
-                                    applicationNosSeen.Add(parallelreservation);
-                                }
-
-                                string mobileno = dataRow["MobileNumber"]?.ToString()?.Trim();
-                                if (string.IsNullOrEmpty(mobileno))
-                                {
-                                    errorLog.Add($"MobileNumber :{mobileno}");
-                                }
-                                else
-                                if (mobilenosSeen.Contains(mobileno) || existingMobileNos.Contains(mobileno))
-                                {
-                                    errorLog.Add($"MobileNo: {mobileno}");
-                                }
-                                else
-                                {
-                                    mobilenosSeen.Add(mobileno);
-                                }
-
-                                string applicationNo = dataRow["ApplicationNo"]?.ToString()?.Trim();
-                                if (string.IsNullOrEmpty(applicationNo))
-                                {
-                                    errorLog.Add($"ApplicationNumber:{applicationNo}");
-                                }
-                                else
-                               if (applicationNosSeen.Contains(applicationNo) || existingApplicationNo.Contains(applicationNo))
-                                {
-                                    errorLog.Add($"ApplicationNo: {applicationNo}");
-                                }
-                                else
-                                {
-                                    applicationNosSeen.Add(applicationNo);
-                                }
-
-                                dataTable2.Rows.Add(dataRow);
-                            }
-                        }
-                        else
-                        {
-                            return StatusCode(422, new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
-                        }
-                    }
+                    FileConverter.ConvertCsvToXlsx(stream, convertedStream);
                 }
-                else
+                else if (Path.GetExtension(file.FileName).Equals(".xls", StringComparison.OrdinalIgnoreCase))
                 {
-                    MemoryStream convertedStream = new MemoryStream();
-                    if (Path.GetExtension(file.FileName).Equals(".xls", StringComparison.OrdinalIgnoreCase))
+                    FileConverter.ConvertXlsToXlsx(stream, convertedStream);
+                }
+
+                MemoryStream newStream = convertedStream.Length > 0 ? convertedStream : stream;
+                newStream.Position = 0;
+
+                using (var package = new ExcelPackage(newStream))
+                {
+                    var worksheet = package.Workbook.Worksheets[0];
+                    int rowCount = worksheet.Dimension.Rows;
+                    int colCount = worksheet.Dimension.Columns;
+
+                    if (rowCount == 1)
                     {
-                        FileConverter.ConvertXlsToXlsx(stream, convertedStream);
+                        return Ok(new Outcome { OutcomeId = 0, OutcomeDetail = "No data in the excel!" });
                     }
 
-                    MemoryStream newStream = convertedStream.Length > 0 ? convertedStream : stream;
-                    newStream.Position = 0;
-
-                    using (var package = new ExcelPackage(newStream))
+                    // Adding columns to DataTable based on Excel header row (first row)
+                    for (int col = 1; col <= colCount; col++)
                     {
-                        var worksheet = package.Workbook.Worksheets[0];
-                        int rowCount = worksheet.Dimension.Rows;
-                        int colCount = worksheet.Dimension.Columns;
-
-                        if (rowCount == 1)
+                        string columnName = worksheet.Cells[1, col].Value?.ToString();
+                        if (!string.IsNullOrEmpty(columnName))
                         {
-                            return StatusCode(422, new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
+                            dataTable2.Columns.Add(new DataColumn(columnName, typeof(string)));
                         }
+                    }
 
+                    // Adding rows to DataTable from Excel data
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        var dataRow = dataTable2.NewRow();
                         for (int col = 1; col <= colCount; col++)
                         {
-                            string columnName = worksheet.Cells[1, col].Value?.ToString();
-                            if (!string.IsNullOrEmpty(columnName))
+                            var cellValue = worksheet.Cells[row, col].Value?.ToString();
+                            if (DateTime.TryParse(cellValue, out DateTime parsedDate))
                             {
-                                dataTable2.Columns.Add(new DataColumn(columnName, typeof(string)));
+                                dataRow[col - 1] = parsedDate.ToString("yyyy-MM-dd");
+                            }
+                            else
+                            {
+                                dataRow[col - 1] = cellValue;
                             }
                         }
-
-                        for (int row = 2; row <= rowCount; row++)
-                        {
-                            var dataRow = dataTable2.NewRow();
-                            for (int col = 1; col <= colCount; col++)
-                            {
-                                var cellValue = worksheet.Cells[row, col].Value?.ToString();
-                                if (DateTime.TryParse(cellValue, out DateTime parsedDate))
-                                {
-                                    dataRow[col - 1] = parsedDate.ToString("yyyy-MM-dd");
-                                }
-                                else
-                                {
-                                    dataRow[col - 1] = cellValue;
-                                }
-                            }
-
-                            string genders = dataRow["Gender"]?.ToString()?.Trim();
-                            if (string.IsNullOrEmpty(genders))
-                            {
-                                errorLog.Add($"Gender :{genders}");
-                            }
-                            else
-                            {
-                                applicationNosSeen.Add(genders);
-                            }
-                            string parallelreservation = dataRow["Parallel Reservation"]?.ToString()?.Trim();
-                            if (string.IsNullOrEmpty(parallelreservation))
-                            {
-                                errorLog.Add($"ParallelReservation :{parallelreservation}");
-                            }
-                            else
-                            {
-                                applicationNosSeen.Add(parallelreservation);
-                            }
-                            string mobileno = dataRow["MobileNumber"]?.ToString()?.Trim();
-                            if (string.IsNullOrEmpty(mobileno))
-                            {
-                                errorLog.Add($"MobileNumber :{mobileno}");
-                            }
-                            else
-                            if (mobilenosSeen.Contains(mobileno) || existingMobileNos.Contains(mobileno))
-                            {
-                                errorLog.Add($"MobileNo: {mobileno}");
-                            }
-                            else
-                            {
-                                mobilenosSeen.Add(mobileno);
-                            }
-
-                            string applicationNo = dataRow["ApplicationNo"]?.ToString()?.Trim();
-                            if (string.IsNullOrEmpty(applicationNo))
-                            {
-                                errorLog.Add($"ApplicationNumber :{applicationNo}");
-                            }
-                            else
-                            if (applicationNosSeen.Contains(applicationNo) || existingApplicationNo.Contains(applicationNo))
-                            {
-                                errorLog.Add($"ApplicationNo: {applicationNo}");
-                            }
-                            else
-                            {
-                                applicationNosSeen.Add(applicationNo);
-                            }
-
-                            dataTable2.Rows.Add(dataRow);
-                        }
+                        dataTable2.Rows.Add(dataRow);
                     }
                 }
             }
 
-            // Create separate error logs for MobileNo and ApplicationNo
-            var mobileNoErrors = errorLog.Where(e => e.Contains("MobileNo")).ToList();
-            var applicationNoErrors = errorLog.Where(e => e.Contains("ApplicationNo")).ToList();
-            var blankMobileNoErrors = errorLog.Where(e => e.Contains("MobileNumber")).ToList();
-            var blankApplicationNoErrors = errorLog.Where(e => e.Contains("ApplicationNumber")).ToList();
-            var blanGenderErrors = errorLog.Where(e => e.Contains("Gender")).ToList();
-            var blankparallelreservationErrors = errorLog.Where(e => e.Contains("ParallelReservation")).ToList();
-             if (errorLog.Any())
-             {
-                var response = new
-                {
-                    OutcomeId = 4,
-                    MobileNoErrors = mobileNoErrors,
-                    ApplicationNoErrors = applicationNoErrors,
-                    BlankMobileNoErrors = blankMobileNoErrors,
-                    BlankApplicationNoErrors = blankApplicationNoErrors,
-                    BlankGenderErrors = blanGenderErrors,
-                    BlankParallelReservationErrors = blankparallelreservationErrors
-                };
-                return StatusCode(409, response);
-            }
-
-            user.BaseModel.OperationType = "InsertDataNewCandidate";
             user.DataTable2 = dataTable2;
             var parameter = await _candidateService.Candidate(user);
             return parameter;
         }
-
-       
-        //public async Task<IActionResult> uploadCandidateNew(IFormFile file, [FromForm] string userId, [FromForm] string RecruitId)
+        //[HttpPost("upload")]
+        //public async Task<IActionResult> UploadExcel(IFormFile file, [FromForm] string userId, [FromForm] string RecruitId)
         //{
         //    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        //    CandidateDto user = new CandidateDto { BaseModel = new BaseModel { OperationType = "InsertDataNewCandidate" } };
+        //    CandidateDto user = new CandidateDto { BaseModel = new BaseModel { OperationType = "InsertData" } };
         //    user.UserId = userId;
         //    user.RecruitId = RecruitId;
         //    if (file == null || file.Length == 0)
@@ -923,9 +985,7 @@ namespace PoliceRecruitmentAPI.Controllers
         //        return BadRequest(ModelState);
         //    }
 
-        //    DataTable dataTable2 = new DataTable();
-
-
+        //    DataTable dataTable = new DataTable();
 
         //    using (var stream = new MemoryStream())
         //    {
@@ -962,37 +1022,27 @@ namespace PoliceRecruitmentAPI.Controllers
         //                string columnName = worksheet.Cells[1, col].Value?.ToString();
         //                if (!string.IsNullOrEmpty(columnName))
         //                {
-        //                    dataTable2.Columns.Add(new DataColumn(columnName, typeof(string)));
+        //                    dataTable.Columns.Add(new DataColumn(columnName, typeof(string)));
         //                }
         //            }
 
         //            // Adding rows to DataTable from Excel data
         //            for (int row = 2; row <= rowCount; row++)
         //            {
-        //                var dataRow = dataTable2.NewRow();
+        //                var dataRow = dataTable.NewRow();
         //                for (int col = 1; col <= colCount; col++)
         //                {
-        //                    var cellValue = worksheet.Cells[row, col].Value?.ToString();
-        //                    if (DateTime.TryParse(cellValue, out DateTime parsedDate))
-        //                    {
-        //                        dataRow[col - 1] = parsedDate.ToString("yyyy-MM-dd");
-        //                    }
-        //                    else
-        //                    {
-        //                        dataRow[col - 1] = cellValue;
-        //                    }
+        //                    dataRow[col - 1] = worksheet.Cells[row, col].Value?.ToString();
         //                }
-        //                dataTable2.Rows.Add(dataRow);
+        //                dataTable.Rows.Add(dataRow);
         //            }
         //        }
         //    }
 
-        //    user.DataTable2 = dataTable2;
+        //    user.DataTable = dataTable;
         //    var parameter = await _candidateService.Candidate(user);
         //    return parameter;
         //}
-
-
 
         public static class FileConverter
         {
@@ -1002,7 +1052,7 @@ namespace PoliceRecruitmentAPI.Controllers
                 {
                     var worksheet = package.Workbook.Worksheets.Add("Sheet1");
 
-                    using (var reader = new StreamReader(inputStream, Encoding.UTF8))
+                    using (var reader = new StreamReader(inputStream,Encoding.UTF8))
                     {
                         int row = 1;
                         while (!reader.EndOfStream)
@@ -1095,7 +1145,7 @@ namespace PoliceRecruitmentAPI.Controllers
                 return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
             }
         }
-
+ 
 
 
         [HttpGet("GetAllDocuments")]
@@ -1111,23 +1161,39 @@ namespace PoliceRecruitmentAPI.Controllers
                 model.BaseModel.OperationType = "GetAllDocuments";
 
                 dynamic userDetail = await _candidateService.Candidate(model);
-                string UserId = model.UserId;
-                model.BaseModel.OperationType = "GetAllDocumentsCastDocumnetStatus";
+                return userDetail;
 
-                dynamic usercaststatus = await _candidateService.Candidate(model);
-                dynamic tempoutdetail = userDetail.Value.Outcome;
-                dynamic finaldata = new { Data = userDetail, StausData = usercaststatus  };
-                dynamic Result = new { Data = finaldata, UserId = UserId, Outcome = tempoutdetail };
-                if (Result == null)
-                {
-                    return NotFound(new { message = "No data found." });
-                }
-                return Ok(Result);
 
             }
             catch (Exception ex)
             {
-                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+
+
+                // Return structured error response
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -1151,7 +1217,33 @@ namespace PoliceRecruitmentAPI.Controllers
             }
             catch (Exception ex)
             {
-                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+
+
+                // Return structured error response
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -1253,21 +1345,47 @@ namespace PoliceRecruitmentAPI.Controllers
                 dynamic eventDetail = await _recruitmentEventService.RecruitEvent(recruitmentEventDto);
 
                 user.BaseModel.OperationType = "GetGrounTestResult";
-
+                 
                 dynamic testDetail = await _candidateService.Candidate(user);
                 dynamic tempoutdetail = testDetail.Value.Outcome;
-                dynamic finaldata = new { data = createduser, Eventlist = eventDetail, Testdata = testDetail };
-                dynamic Result = new { Data = finaldata, UserId = UserId, Outcome = tempoutdetail };
+                dynamic finaldata = new { data = createduser, Eventlist = eventDetail , Testdata = testDetail };
+                dynamic Result = new { Data = finaldata, UserId = UserId, Outcome = tempoutdetail  };
                 if (Result == null)
                 {
                     return NotFound(new { message = "No data found." });
                 }
                 return Ok(Result);
-                // return createduser;
+               // return createduser;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+
+
+                // Return structured error response
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -1287,9 +1405,34 @@ namespace PoliceRecruitmentAPI.Controllers
                 var result = await _candidateService.Candidate(model);
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+
+                // Return structured error response
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
         //[HttpGet("GetShotPutScore")]

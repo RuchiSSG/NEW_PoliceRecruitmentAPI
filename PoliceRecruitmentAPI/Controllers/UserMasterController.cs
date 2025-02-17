@@ -13,9 +13,6 @@ using Task = System.Threading.Tasks.Task;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using common;
-using CsvHelper.Configuration;
-using CsvHelper;
-using PoliceRecruitmentAPI.Services.ApiServices;
 using System.Globalization;
 
 
@@ -54,11 +51,34 @@ namespace PoliceRecruitmentAPI.Controllers
 				var createduser = await _usermaster.UserMaster(user);
 				return createduser;
 			}
-			catch (Exception ex)
-			{
-				throw;
-			}
-		}
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
 
 		
 		[HttpGet("Get")]
@@ -76,11 +96,34 @@ namespace PoliceRecruitmentAPI.Controllers
 				var parameter = await _usermaster.Get(user);
 				return parameter;
 			}
-			catch (Exception)
-			{
-				throw;
-			}
-		}
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
 
 
 
@@ -115,11 +158,34 @@ namespace PoliceRecruitmentAPI.Controllers
 
 				return createduser;
 			}
-			catch (Exception)
-			{
-				throw;
-			}
-		}
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
 
 
 		[HttpGet("Shuffle")]
@@ -141,11 +207,34 @@ namespace PoliceRecruitmentAPI.Controllers
 
 				return createduser;
 			}
-			catch (Exception)
-			{
-				throw;
-			}
-		}
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
 		private async Task SendNo(dynamic datavalue2)
 		{
 
@@ -233,15 +322,46 @@ namespace PoliceRecruitmentAPI.Controllers
 		[HttpPost("Delete")]
 		public async Task<IActionResult> Delete([FromBody] UserMasterDto user)
 		{
-			if (user.BaseModel == null)
-			{
-				user.BaseModel = new BaseModel();
-			}
+            try
+            {
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
 
-			user.BaseModel.OperationType = "Delete";
-			var usertDetails = await _usermaster.UserMaster(user);
-			return usertDetails;
-		}
+                user.BaseModel.OperationType = "Delete";
+                var usertDetails = await _usermaster.UserMaster(user);
+                return usertDetails;
+            }
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
+    
 
 
 
@@ -376,27 +496,17 @@ namespace PoliceRecruitmentAPI.Controllers
             }
         }
         [HttpPost("upload")]
-
         public async Task<IActionResult> UploadExcel(IFormFile file, [FromForm] string userId, [FromForm] string um_recruitid)
         {
-
-
+            
+            
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            UserMasterDto user = new UserMasterDto();
+            UserMasterDto user = new UserMasterDto { BaseModel = new BaseModel { OperationType = "InsertData" } };
             user.UserId = userId;
             user.um_recruitid = um_recruitid;
-            if (user.BaseModel == null)
-            {
-                user.BaseModel = new BaseModel();
-            }
-
-            
-
             if (file == null || file.Length == 0)
             {
-                return StatusCode(422, new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
-
-                //return Ok(new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
+                return Ok(new Outcome { OutcomeId = 0, OutcomeDetail = "No data in the excel!" });
             }
 
             string[] allowedFileExtensions = { ".xls", ".xlsx", ".xlsm", ".csv" };
@@ -407,271 +517,63 @@ namespace PoliceRecruitmentAPI.Controllers
             }
 
             DataTable dataTable = new DataTable();
-            List<string> errorLog = new List<string>();
-            HashSet<string> usernamesSeen = new HashSet<string>();  // Track seen usernames
-            HashSet<string> BukkelNosSeen = new HashSet<string>();
-             
-            user.BaseModel.OperationType = "ExistingCandidateUserName";
-            dynamic existingUsernames1 = await _usermaster.UserMaster(user);
-
-            // Manually loop through the dynamic data and extract the usernames
-            HashSet<string> existingUsernames = new HashSet<string>();
-            foreach (var userObj in existingUsernames1.Value.Data)
-            {
-                string username = userObj.um_user_name?.ToString().Trim();
-                if (!string.IsNullOrEmpty(username))
-                {
-                    existingUsernames.Add(username);
-                }
-            }
-
-            // Do the same for tokenNos and applicationNos
-            user.BaseModel.OperationType = "ExistingCandidateBukkelNo";
-            dynamic existingBukkelNo1 = await _usermaster.UserMaster(user);
-
-            HashSet<string> existingBukkelNos = new HashSet<string>();
-            foreach (var BukkelNoObj in existingBukkelNo1.Value.Data)
-            {
-                string BukkelNo = BukkelNoObj.um_bukkel_no?.ToString().Trim();
-                if (!string.IsNullOrEmpty(BukkelNo))
-                {
-                    existingBukkelNos.Add(BukkelNo);
-                }
-            }
-
-            
 
             using (var stream = new MemoryStream())
             {
                 await file.CopyToAsync(stream);
                 stream.Position = 0;
 
-                // Handling CSV separately
+                MemoryStream convertedStream = new MemoryStream();
                 if (Path.GetExtension(file.FileName).Equals(".csv", StringComparison.OrdinalIgnoreCase))
                 {
-                    using (var reader = new StreamReader(stream))
-                    using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
-                    {
-                        // Make sure CsvHelper knows to handle quoted values properly
-                        Quote = '"',
-                        Delimiter = ",",
-                        BadDataFound = null // To ignore invalid data rows
-                    }))
-                    {
-                        var records = csv.GetRecords<dynamic>().ToList();
-
-                        // Creating DataTable based on CSV data
-                        if (records.Any())
-                        {
-                            // Add columns to DataTable
-                            var header = ((IDictionary<string, object>)records[0]).Keys.ToList();
-                            foreach (var column in header)
-                            {
-                                dataTable.Columns.Add(new DataColumn(column, typeof(string)));
-                            }
-
-                            // Add rows to DataTable
-                            foreach (var record in records)
-                            {
-                                var dataRow = dataTable.NewRow();
-                                foreach (var column in header)
-                                {
-                                    dataRow[column] = ((IDictionary<string, object>)record)[column]?.ToString();
-                                }
-
-                                string username = dataRow["User Name"]?.ToString()?.Trim();
-                                if (usernamesSeen.Contains(username) || existingUsernames.Contains(username))
-                                {
-                                    errorLog.Add($"Duplicate Username found: {username}");
-                                }
-                                else
-                                {
-                                    usernamesSeen.Add(username);
-                                }
-
-                                string BukkelNo = dataRow["Bukkel No"]?.ToString()?.Trim();
-                                if (BukkelNosSeen.Contains(BukkelNo) || existingBukkelNos.Contains(username))
-                                {
-                                    errorLog.Add($"Duplicate BukkelNo found: {BukkelNo}");
-                                }
-                                else
-                                {
-                                    BukkelNosSeen.Add(BukkelNo);
-                                }
-                                 
-
-                                dataTable.Rows.Add(dataRow);
-                            }
-                        }
-                        else
-                        {
-                            return StatusCode(422, new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
-
-                            //return Ok(new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
-
-                        }
-                    }
+                    FileConverter.ConvertCsvToXlsx(stream, convertedStream);
                 }
-                else
+                else if (Path.GetExtension(file.FileName).Equals(".xls", StringComparison.OrdinalIgnoreCase))
                 {
-                    // If it’s an Excel file (XLS, XLSX), use EPPlus to convert and process
-                    MemoryStream convertedStream = new MemoryStream();
-                    if (Path.GetExtension(file.FileName).Equals(".xls", StringComparison.OrdinalIgnoreCase))
+                    FileConverter.ConvertXlsToXlsx(stream, convertedStream);
+                }
+
+                MemoryStream newStream = convertedStream.Length > 0 ? convertedStream : stream;
+                newStream.Position = 0;
+
+                using (var package = new ExcelPackage(newStream))
+                {
+                    var worksheet = package.Workbook.Worksheets[0];
+                    int rowCount = worksheet.Dimension.Rows;
+                    int colCount = worksheet.Dimension.Columns;
+
+                    if (rowCount == 1)
                     {
-                        FileConverter.ConvertXlsToXlsx(stream, convertedStream);
+                        return Ok(new Outcome { OutcomeId = 0, OutcomeDetail = "No data in the excel!" });
                     }
 
-                    MemoryStream newStream = convertedStream.Length > 0 ? convertedStream : stream;
-                    newStream.Position = 0;
-
-                    using (var package = new ExcelPackage(newStream))
+                    // Adding columns to DataTable based on Excel header row (first row)
+                    for (int col = 1; col <= colCount; col++)
                     {
-                        var worksheet = package.Workbook.Worksheets[0];
-                        int rowCount = worksheet.Dimension.Rows;
-                        int colCount = worksheet.Dimension.Columns;
-
-                        if (rowCount == 1)
+                        string columnName = worksheet.Cells[1, col].Value?.ToString();
+                        if (!string.IsNullOrEmpty(columnName))
                         {
-                            return StatusCode(422, new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
-
-                            //return Ok(new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
+                            dataTable.Columns.Add(new DataColumn(columnName, typeof(string)));
                         }
+                    }
 
-                        // Adding columns to DataTable based on Excel header row (first row)
+                    // Adding rows to DataTable from Excel data
+                    for (int row = 2; row <= rowCount; row++)
+                    {
+                        var dataRow = dataTable.NewRow();
                         for (int col = 1; col <= colCount; col++)
                         {
-                            string columnName = worksheet.Cells[1, col].Value?.ToString();
-                            if (!string.IsNullOrEmpty(columnName))
-                            {
-                                dataTable.Columns.Add(new DataColumn(columnName, typeof(string)));
-                            }
+                            dataRow[col - 1] = worksheet.Cells[row, col].Value?.ToString();
                         }
-
-                        for (int row = 2; row <= rowCount; row++)
-                        {
-                            var dataRow = dataTable.NewRow();
-                            for (int col = 1; col <= colCount; col++)
-                            {
-                                dataRow[col - 1] = worksheet.Cells[row, col].Value?.ToString();
-                            }
-
-                            string username = dataRow["User Name"]?.ToString()?.Trim();
-                            if (usernamesSeen.Contains(username) || existingUsernames.Contains(username))
-                            {
-                                errorLog.Add($"Duplicate Username found: {username}");
-                            }
-                            else
-                            {
-                                usernamesSeen.Add(username);
-                            }
-
-                            string BukkelNo = dataRow["Bukkel No"]?.ToString()?.Trim();
-                            if (BukkelNosSeen.Contains(BukkelNo) || existingBukkelNos.Contains(username))
-                            {
-                                errorLog.Add($"Duplicate BukkelNo found: {BukkelNo}");
-                            }
-                            else
-                            {
-                                BukkelNosSeen.Add(BukkelNo);
-                            }
-
-
-                            dataTable.Rows.Add(dataRow);
-                        }
+                        dataTable.Rows.Add(dataRow);
                     }
                 }
             }
-            if (errorLog.Any())
-            {
-                return StatusCode(409, new Outcome { OutcomeId = 4, OutcomeDetail = string.Join("; ", errorLog) });
-                // Return error log if any duplicates were found
-                //return Ok(new Outcome { OutcomeId = 4, OutcomeDetail = string.Join("; ", errorLog) });
-            }
-            user.BaseModel.OperationType = "InsertData";
+
             user.DataTable = dataTable;
             var parameter = await _usermaster.UserMaster(user);
             return parameter;
         }
-
-        //public async Task<IActionResult> UploadExcel(IFormFile file, [FromForm] string userId, [FromForm] string um_recruitid)
-        //{
-
-
-        //    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        //    UserMasterDto user = new UserMasterDto { BaseModel = new BaseModel { OperationType = "InsertData" } };
-        //    user.UserId = userId;
-        //    user.um_recruitid = um_recruitid;
-        //    if (file == null || file.Length == 0)
-        //    {
-        //        return Ok(new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
-        //    }
-
-        //    string[] allowedFileExtensions = { ".xls", ".xlsx", ".xlsm", ".csv" };
-        //    if (!allowedFileExtensions.Contains(Path.GetExtension(file.FileName)))
-        //    {
-        //        ModelState.AddModelError("File", "Please upload a file of type: " + string.Join(", ", allowedFileExtensions));
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    DataTable dataTable = new DataTable();
-
-        //    using (var stream = new MemoryStream())
-        //    {
-        //        await file.CopyToAsync(stream);
-        //        stream.Position = 0;
-
-        //        MemoryStream convertedStream = new MemoryStream();
-        //        if (Path.GetExtension(file.FileName).Equals(".csv", StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            FileConverter.ConvertCsvToXlsx(stream, convertedStream);
-        //        }
-        //        else if (Path.GetExtension(file.FileName).Equals(".xls", StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            FileConverter.ConvertXlsToXlsx(stream, convertedStream);
-        //        }
-
-        //        MemoryStream newStream = convertedStream.Length > 0 ? convertedStream : stream;
-        //        newStream.Position = 0;
-
-        //        using (var package = new ExcelPackage(newStream))
-        //        {
-        //            var worksheet = package.Workbook.Worksheets[0];
-        //            int rowCount = worksheet.Dimension.Rows;
-        //            int colCount = worksheet.Dimension.Columns;
-
-        //            if (rowCount == 1)
-        //            {
-        //               return StatusCode(422, new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
-
-        //            }
-
-        //            // Adding columns to DataTable based on Excel header row (first row)
-        //            for (int col = 1; col <= colCount; col++)
-        //            {
-        //                string columnName = worksheet.Cells[1, col].Value?.ToString();
-        //                if (!string.IsNullOrEmpty(columnName))
-        //                {
-        //                    dataTable.Columns.Add(new DataColumn(columnName, typeof(string)));
-        //                }
-        //            }
-
-        //            // Adding rows to DataTable from Excel data
-        //            for (int row = 2; row <= rowCount; row++)
-        //            {
-        //                var dataRow = dataTable.NewRow();
-        //                for (int col = 1; col <= colCount; col++)
-        //                {
-        //                    dataRow[col - 1] = worksheet.Cells[row, col].Value?.ToString();
-        //                }
-        //                dataTable.Rows.Add(dataRow);
-        //            }
-        //        }
-        //    }
-
-        //    user.DataTable = dataTable;
-        //    var parameter = await _usermaster.UserMaster(user);
-        //    return parameter;
-        //}
 
         [HttpGet("download")]
         public IActionResult DownloadExcel()
@@ -682,7 +584,7 @@ namespace PoliceRecruitmentAPI.Controllers
             // Set EPPlus LicenseContext to NonCommercial (or Commercial if applicable)
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-           
+            // Create a new Excel package
             using (var package = new ExcelPackage())
             {
                 // Add a new worksheet

@@ -8,10 +8,12 @@ using Microsoft.IdentityModel.Tokens;
 using PoliceRecruitmentAPI.Core.ModelDtos;
 using PoliceRecruitmentAPI.DataAccess.Context;
 using PoliceRecruitmentAPI.Services.Interfaces;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Token;
+
 
 
 namespace PoliceRecruitmentAPI.Controllers
@@ -357,21 +359,30 @@ namespace PoliceRecruitmentAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred during login.");
-                var result = new Result
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
                 {
-                    Data = null,
-                    Outcome = new Outcome
-                    {
-                        OutcomeId = 0,
-                        OutcomeDetail = "An error occurred during login",
-                        Tokens = null,
-                        Expiration = null,
-                        SessionId = model.SessionId,
-                        IpAddress = model.IpAddress
-                    }
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model.BaseModel?.OperationType ?? "Unknown",
+
                 };
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
+
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                    LogErrorResponse.SEPARATOR_LINE,
+                    errorResponse.ErrorId,
+                   errorResponse.FormattedTimestamp,
+                    errorResponse.Message,
+                    errorResponse.StackTrace,
+                    LogErrorResponse.SEPARATOR_LINE
+                );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
