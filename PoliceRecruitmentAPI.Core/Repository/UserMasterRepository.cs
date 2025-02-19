@@ -117,7 +117,14 @@ namespace PoliceRecruitmentAPI.Core.Repository
 							StatusCode = 409
 						};
 					}
-					else
+                    else if (outcomeId == 3)
+                    {
+                        return new ObjectResult(result)
+                        {
+                            StatusCode = 423
+                        };
+                    }
+                    else
 					{
 						return new ObjectResult(result)
 						{
