@@ -439,7 +439,18 @@ namespace PoliceRecruitmentAPI.Controllers
                 }
             }
 
+            user.BaseModel.OperationType = "ExistingDutyName";
+            dynamic existingDutyname1 = await _usermaster.UserMaster(user);
 
+            HashSet<string> existingDutyname = new HashSet<string>();
+            foreach (var BukkelNoObj in existingBukkelNo1.Value.Data)
+            {
+                string Dutyname = BukkelNoObj.um_bukkel_no?.ToString().Trim();
+                if (!string.IsNullOrEmpty(Dutyname))
+                {
+                    existingBukkelNos.Add(Dutyname);
+                }
+            }
 
             using (var stream = new MemoryStream())
             {
@@ -508,7 +519,21 @@ namespace PoliceRecruitmentAPI.Controllers
                                 {
                                     BukkelNosSeen.Add(BukkelNo);
                                 }
-
+                                string DutyNames = dataRow["Duty"]?.ToString()?.Trim();
+                                if (string.IsNullOrEmpty(DutyNames))
+                                {
+                                    errorLog.Add($"BlankDutyName :{DutyNames}");
+                                }
+                                else
+                                if (usernamesSeen.Contains(DutyNames) || existingUsernames.Contains(DutyNames))
+                                {
+                                    usernamesSeen.Add(DutyNames);
+                                   
+                                }
+                                else
+                                {
+                                    errorLog.Add($"DutyNotAvailable : {DutyNames}");
+                                }
 
                                 dataTable.Rows.Add(dataRow);
                             }
@@ -594,7 +619,21 @@ namespace PoliceRecruitmentAPI.Controllers
                             {
                                 BukkelNosSeen.Add(BukkelNo);
                             }
+                            string DutyNames = dataRow["Duty"]?.ToString()?.Trim();
+                            if (string.IsNullOrEmpty(DutyNames))
+                            {
+                                errorLog.Add($"BlankDutyName :{DutyNames}");
+                            }
+                            else
+                            if (usernamesSeen.Contains(DutyNames) || existingUsernames.Contains(DutyNames))
+                            {
+                                usernamesSeen.Add(DutyNames);
 
+                            }
+                            else
+                            {
+                                errorLog.Add($"DutyNotAvailable : {DutyNames}");
+                            }
 
                             dataTable.Rows.Add(dataRow);
                         }
@@ -605,6 +644,7 @@ namespace PoliceRecruitmentAPI.Controllers
             var duplicateBukkelNo = errorLog.Where(e => e.Contains("DuplicateBukkelNo")).ToList();
             var blankUserName = errorLog.Where(e => e.Contains("BlankUserName")).ToList();
             var blankBukkelNo = errorLog.Where(e => e.Contains("BlankBukkelNo")).ToList();
+            var dutynames = errorLog.Where(e => e.Contains("DutyNotAvailable")).ToList();
 
             if (errorLog.Any())
             {
@@ -614,7 +654,8 @@ namespace PoliceRecruitmentAPI.Controllers
                     DuplicateUsernameErrors = duplicateUsername,
                     DuplicateBukkelNoErrors = duplicateBukkelNo,
                     BlankUserNameErrors = blankUserName,
-                    BlankBukkelNoErrors = blankBukkelNo
+                    BlankBukkelNoErrors = blankBukkelNo,
+                    DutyNotAvailable= dutynames
                 };
                 return StatusCode(409, response);
                 //return StatusCode(409, new Outcome { OutcomeId = 4, OutcomeDetail = string.Join("; ", errorLog) });

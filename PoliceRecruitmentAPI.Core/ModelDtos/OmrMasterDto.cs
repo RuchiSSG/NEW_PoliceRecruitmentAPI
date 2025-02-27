@@ -14,5 +14,7 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
         public string? RecruitId { get; set; }
         public string? AnswerData { get; set; }
         public string? IsActive { get; set; }
+        public string? QuestionSet { get; set; }
+
     }
 }
