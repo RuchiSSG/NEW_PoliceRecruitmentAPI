@@ -410,6 +410,7 @@ namespace PoliceRecruitmentAPI.Controllers
             List<string> errorLog = new List<string>();
             HashSet<string> usernamesSeen = new HashSet<string>();  // Track seen usernames
             HashSet<string> BukkelNosSeen = new HashSet<string>();
+            HashSet<string> DutynameSeen = new HashSet<string>();
 
             user.BaseModel.OperationType = "ExistingCandidateUserName";
             dynamic existingUsernames1 = await _usermaster.UserMaster(user);
@@ -443,12 +444,12 @@ namespace PoliceRecruitmentAPI.Controllers
             dynamic existingDutyname1 = await _usermaster.UserMaster(user);
 
             HashSet<string> existingDutyname = new HashSet<string>();
-            foreach (var BukkelNoObj in existingBukkelNo1.Value.Data)
+            foreach (var DutynameObj in existingDutyname1.Value.Data)
             {
-                string Dutyname = BukkelNoObj.um_bukkel_no?.ToString().Trim();
+                string Dutyname = DutynameObj.d_dutyname?.ToString().Trim();
                 if (!string.IsNullOrEmpty(Dutyname))
                 {
-                    existingBukkelNos.Add(Dutyname);
+                    existingDutyname.Add(Dutyname);
                 }
             }
 
@@ -525,9 +526,9 @@ namespace PoliceRecruitmentAPI.Controllers
                                     errorLog.Add($"BlankDutyName :{DutyNames}");
                                 }
                                 else
-                                if (usernamesSeen.Contains(DutyNames) || existingUsernames.Contains(DutyNames))
+                                if (DutynameSeen.Contains(DutyNames) || existingDutyname.Contains(DutyNames))
                                 {
-                                    usernamesSeen.Add(DutyNames);
+                                    DutynameSeen.Add(DutyNames);
                                    
                                 }
                                 else
@@ -625,9 +626,9 @@ namespace PoliceRecruitmentAPI.Controllers
                                 errorLog.Add($"BlankDutyName :{DutyNames}");
                             }
                             else
-                            if (usernamesSeen.Contains(DutyNames) || existingUsernames.Contains(DutyNames))
+                            if (DutynameSeen.Contains(DutyNames) || existingDutyname.Contains(DutyNames))
                             {
-                                usernamesSeen.Add(DutyNames);
+                                DutynameSeen.Add(DutyNames);
 
                             }
                             else
