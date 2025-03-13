@@ -125,6 +125,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
             parameters.Add("@ScheduleDate", user.ScheduleDate, DbType.DateTime);
             parameters.Add("@newScheduleDate", user.NewScheduleDate, DbType.DateTime);
             parameters.Add("@CandidateId", user.CandidateId, DbType.String);
+            parameters.Add("@Isactive", user.Isactive, DbType.String);
             parameters.Add("@RecruitId", user.RecruitId, DbType.String);
             parameters.Add("@OutcomeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@OutcomeDetail", dbType: DbType.String, size: 4000, direction: ParameterDirection.Output);

@@ -148,7 +148,9 @@ namespace PoliceRecruitmentAPI.Core.Repository
             parameters.Add("@UserId", user.UserId, DbType.String);
             parameters.Add("@AnswerData", user.AnswerData, DbType.String);
             parameters.Add("@RecruitId", user.RecruitId, DbType.String);
-            parameters.Add("@isActive", user.IsActive, DbType.String);
+            parameters.Add("@isActive", user.IsActive, DbType.String); 
+            parameters.Add("@QuestionSet", user.QuestionSet, DbType.String); 
+
             //if (user.DataTable != null && user.DataTable.Rows.Count > 0)
             //{
             //    parameters.Add("@CastCut", user.DataTable.AsTableValuedParameter("[dbo].[tbl_CastCutOffMaster]"));

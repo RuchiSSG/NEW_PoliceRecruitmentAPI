@@ -410,6 +410,7 @@ namespace PoliceRecruitmentAPI.Controllers
             List<string> errorLog = new List<string>();
             HashSet<string> usernamesSeen = new HashSet<string>();  // Track seen usernames
             HashSet<string> BukkelNosSeen = new HashSet<string>();
+            HashSet<string> DutynameSeen = new HashSet<string>();
 
             user.BaseModel.OperationType = "ExistingCandidateUserName";
             dynamic existingUsernames1 = await _usermaster.UserMaster(user);
@@ -439,7 +440,18 @@ namespace PoliceRecruitmentAPI.Controllers
                 }
             }
 
+            user.BaseModel.OperationType = "ExistingDutyName";
+            dynamic existingDutyname1 = await _usermaster.UserMaster(user);
 
+            HashSet<string> existingDutyname = new HashSet<string>();
+            foreach (var DutynameObj in existingDutyname1.Value.Data)
+            {
+                string Dutyname = DutynameObj.d_dutyname?.ToString().Trim();
+                if (!string.IsNullOrEmpty(Dutyname))
+                {
+                    existingDutyname.Add(Dutyname);
+                }
+            }
 
             using (var stream = new MemoryStream())
             {
@@ -508,7 +520,21 @@ namespace PoliceRecruitmentAPI.Controllers
                                 {
                                     BukkelNosSeen.Add(BukkelNo);
                                 }
-
+                                string DutyNames = dataRow["Duty"]?.ToString()?.Trim();
+                                if (string.IsNullOrEmpty(DutyNames))
+                                {
+                                    errorLog.Add($"BlankDutyName :{DutyNames}");
+                                }
+                                else
+                                if (DutynameSeen.Contains(DutyNames) || existingDutyname.Contains(DutyNames))
+                                {
+                                    DutynameSeen.Add(DutyNames);
+                                   
+                                }
+                                else
+                                {
+                                    errorLog.Add($"DutyNotAvailable : {DutyNames}");
+                                }
 
                                 dataTable.Rows.Add(dataRow);
                             }
@@ -594,7 +620,21 @@ namespace PoliceRecruitmentAPI.Controllers
                             {
                                 BukkelNosSeen.Add(BukkelNo);
                             }
+                            string DutyNames = dataRow["Duty"]?.ToString()?.Trim();
+                            if (string.IsNullOrEmpty(DutyNames))
+                            {
+                                errorLog.Add($"BlankDutyName :{DutyNames}");
+                            }
+                            else
+                            if (DutynameSeen.Contains(DutyNames) || existingDutyname.Contains(DutyNames))
+                            {
+                                DutynameSeen.Add(DutyNames);
 
+                            }
+                            else
+                            {
+                                errorLog.Add($"DutyNotAvailable : {DutyNames}");
+                            }
 
                             dataTable.Rows.Add(dataRow);
                         }
@@ -605,6 +645,7 @@ namespace PoliceRecruitmentAPI.Controllers
             var duplicateBukkelNo = errorLog.Where(e => e.Contains("DuplicateBukkelNo")).ToList();
             var blankUserName = errorLog.Where(e => e.Contains("BlankUserName")).ToList();
             var blankBukkelNo = errorLog.Where(e => e.Contains("BlankBukkelNo")).ToList();
+            var dutynames = errorLog.Where(e => e.Contains("DutyNotAvailable")).ToList();
 
             if (errorLog.Any())
             {
@@ -614,7 +655,8 @@ namespace PoliceRecruitmentAPI.Controllers
                     DuplicateUsernameErrors = duplicateUsername,
                     DuplicateBukkelNoErrors = duplicateBukkelNo,
                     BlankUserNameErrors = blankUserName,
-                    BlankBukkelNoErrors = blankBukkelNo
+                    BlankBukkelNoErrors = blankBukkelNo,
+                    DutyNotAvailable= dutynames
                 };
                 return StatusCode(409, response);
                 //return StatusCode(409, new Outcome { OutcomeId = 4, OutcomeDetail = string.Join("; ", errorLog) });

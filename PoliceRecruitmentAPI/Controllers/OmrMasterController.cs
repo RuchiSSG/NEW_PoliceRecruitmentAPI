@@ -80,13 +80,14 @@ namespace PoliceRecruitmentAPI.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll([FromQuery] string userid, [FromQuery] string recConfId)
+        public async Task<IActionResult> GetAll([FromQuery] string userid, [FromQuery] string recConfId, [FromQuery] string QuestionSet)
         {
 
             OmrMasterDto model = new OmrMasterDto();
 
             model.RecruitId = recConfId;
             model.UserId = userid;
+            model.QuestionSet = QuestionSet;
             try
             {
                 //ShotPutDto model = new ShotPutDto();
