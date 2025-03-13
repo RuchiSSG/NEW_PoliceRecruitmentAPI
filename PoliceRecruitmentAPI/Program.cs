@@ -106,6 +106,8 @@ try
     builder.Services.AddScoped<IOmrMasterService, OmrMasterService>().AddScoped<OmrMasterRepository>();
     builder.Services.AddScoped<IEventAccessService, EventAccessService>().AddScoped<EventAccessRepository>();
     builder.Services.AddScoped<ICandidateScheduleMasterService, CandidateScheduleMasterService>().AddScoped<CandidateScheduleMasterRepository>();
+    builder.Services.AddScoped<IRfidRepository, Rfid>();
+
 
     builder.Services.AddHttpClient();
 
