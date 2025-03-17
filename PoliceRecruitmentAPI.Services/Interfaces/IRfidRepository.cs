@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PoliceRecruitmentAPI.Core;
 using PoliceRecruitmentAPI.Core.ModelDtos;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PoliceRecruitmentAPI.Services.Interfaces
 {
@@ -13,6 +14,7 @@ namespace PoliceRecruitmentAPI.Services.Interfaces
     {
         Task StartListenerAsync();
         Task StopListener();
-        Task<RfidResult> GetLatestTagAsync();
+        Task<IActionResult> GetLatestTagAsync(RfidOutcome rfidTagDto);
+        void SetParameters(string accessToken, string refreshToken, string userid, string recruitid);
     }
 }

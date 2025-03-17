@@ -13,315 +13,80 @@ using Task = System.Threading.Tasks.Task;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using common;
+using CsvHelper.Configuration;
+using CsvHelper;
+using PoliceRecruitmentAPI.Services.ApiServices;
 using System.Globalization;
 
 
 namespace PoliceRecruitmentAPI.Controllers
 {
-	[Route("api/[controller]")]
-	[ApiController]
+    [Route("api/[controller]")]
+    [ApiController]
     [ExampleFilterAttribute]
     public class UserMasterController : ControllerBase
-	{
+    {
 
-		public IConfiguration _configuration;
-		private readonly ILogger<UserMasterController> _logger;
-		public readonly IUserMasterService _usermaster;
+        public IConfiguration _configuration;
+        private readonly ILogger<UserMasterController> _logger;
+        public readonly IUserMasterService _usermaster;
 
-		public UserMasterController(ILogger<UserMasterController> logger, IConfiguration configuration, IUserMasterService usermaster)
-		{
-			_logger = logger;
-			_configuration = configuration;
-			_usermaster = usermaster;
-		}
+        public UserMasterController(ILogger<UserMasterController> logger, IConfiguration configuration, IUserMasterService usermaster)
+        {
+            _logger = logger;
+            _configuration = configuration;
+            _usermaster = usermaster;
+        }
 
 
-		[HttpGet("GetAll")]
-		public async Task<IActionResult> GetAll([FromQuery]UserMasterDto user)
-		{
-			try
-			{
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll([FromQuery] UserMasterDto user)
+        {
+            try
+            {
 
-				if (user.BaseModel == null)
-				{
-					user.BaseModel = new BaseModel();
-				}
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
 
-				user.BaseModel.OperationType = "GetAll";
-				var createduser = await _usermaster.UserMaster(user);
-				return createduser;
-			}
+                user.BaseModel.OperationType = "GetAll";
+                var createduser = await _usermaster.UserMaster(user);
+                return createduser;
+            }
             catch (Exception ex)
             {
-                // Using LogErrorResponse model for cleaner code
-                var errorResponse = new LogErrorResponse
-                {
-                    ErrorId = Guid.NewGuid().ToString("N"),
-                    Timestamp = DateTime.Now,
-                    Message = ex.Message,
-                    StackTrace = ex.StackTrace,
-                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
-                };
-
-                // Log error details
-                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
-                     LogErrorResponse.SEPARATOR_LINE,
-                     errorResponse.ErrorId,
-                     errorResponse.FormattedTimestamp,
-                     errorResponse.Message,
-                     errorResponse.StackTrace,
-                     LogErrorResponse.SEPARATOR_LINE
-                 );
-
-                return new JsonResult(errorResponse)
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
+                throw;
             }
         }
 
-		
-		[HttpGet("Get")]
-		public async Task<IActionResult> Get([FromQuery] UserMasterDto user)
-		{
-			
-			if (user.BaseModel == null)
-			{
-				user.BaseModel = new BaseModel();
-			}
-			
-			user.BaseModel.OperationType = "Get";
-			try
-			{
-				var parameter = await _usermaster.Get(user);
-				return parameter;
-			}
-            catch (Exception ex)
+
+        [HttpGet("Get")]
+        public async Task<IActionResult> Get([FromQuery] UserMasterDto user)
+        {
+
+            if (user.BaseModel == null)
             {
-                // Using LogErrorResponse model for cleaner code
-                var errorResponse = new LogErrorResponse
-                {
-                    ErrorId = Guid.NewGuid().ToString("N"),
-                    Timestamp = DateTime.Now,
-                    Message = ex.Message,
-                    StackTrace = ex.StackTrace,
-                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
-                };
+                user.BaseModel = new BaseModel();
+            }
 
-                // Log error details
-                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
-                     LogErrorResponse.SEPARATOR_LINE,
-                     errorResponse.ErrorId,
-                     errorResponse.FormattedTimestamp,
-                     errorResponse.Message,
-                     errorResponse.StackTrace,
-                     LogErrorResponse.SEPARATOR_LINE
-                 );
-
-                return new JsonResult(errorResponse)
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
+            user.BaseModel.OperationType = "Get";
+            try
+            {
+                var parameter = await _usermaster.Get(user);
+                return parameter;
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
 
 
-		[HttpPost]
-		public async Task<IActionResult> Insert([FromBody] UserMasterDto user)
-		{
-			try
-			{
-				if (user.BaseModel == null)
-				{
-					user.BaseModel = new BaseModel();
-				}
-
-				if (user.um_id == null)
-				{
-					user.BaseModel.OperationType = "Insert";
-				}
-				else
-				{
-					user.um_updateddate = DateTime.Now;
-					user.BaseModel.OperationType = "Update";
-				}
-				dynamic createduser = await _usermaster.UserMaster(user);
-				var outcomeidvalue = createduser.Value.Outcome.OutcomeId;
-				//if (outcomeidvalue == 1)
-				//{
-
-				//	var datavalue = createduser.Value.Outcome.OutcomeDetail;
-
-				//	await SendNo(datavalue);
-				//}
-
-				return createduser;
-			}
-            catch (Exception ex)
-            {
-                // Using LogErrorResponse model for cleaner code
-                var errorResponse = new LogErrorResponse
-                {
-                    ErrorId = Guid.NewGuid().ToString("N"),
-                    Timestamp = DateTime.Now,
-                    Message = ex.Message,
-                    StackTrace = ex.StackTrace,
-                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
-                };
-
-                // Log error details
-                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
-                     LogErrorResponse.SEPARATOR_LINE,
-                     errorResponse.ErrorId,
-                     errorResponse.FormattedTimestamp,
-                     errorResponse.Message,
-                     errorResponse.StackTrace,
-                     LogErrorResponse.SEPARATOR_LINE
-                 );
-
-                return new JsonResult(errorResponse)
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
-            }
-        }
-
-
-		[HttpGet("Shuffle")]
-		public async Task<IActionResult> Shuffle([FromQuery] UserMasterDto user)
-		{
-			try
-			{
-				
-
-				if (user.BaseModel == null)
-				{
-					user.BaseModel = new BaseModel();
-				}
-				user.BaseModel.OperationType = "Shuffle";
-				
-				dynamic createduser = await _usermaster.UserMaster(user);
-				var outcomeidvalue = createduser.Value.Outcome.OutcomeId;
-
-
-				return createduser;
-			}
-            catch (Exception ex)
-            {
-                // Using LogErrorResponse model for cleaner code
-                var errorResponse = new LogErrorResponse
-                {
-                    ErrorId = Guid.NewGuid().ToString("N"),
-                    Timestamp = DateTime.Now,
-                    Message = ex.Message,
-                    StackTrace = ex.StackTrace,
-                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
-                };
-
-                // Log error details
-                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
-                     LogErrorResponse.SEPARATOR_LINE,
-                     errorResponse.ErrorId,
-                     errorResponse.FormattedTimestamp,
-                     errorResponse.Message,
-                     errorResponse.StackTrace,
-                     LogErrorResponse.SEPARATOR_LINE
-                 );
-
-                return new JsonResult(errorResponse)
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
-            }
-        }
-		private async Task SendNo(dynamic datavalue2)
-		{
-
-			string[] parts = datavalue2.Split(';');
-			string userpassword = "";
-			string username = "";
-			string title = "Login Credentials";
-			string email = "";
-			if (parts.Length == 3)
-			{
-				userpassword = parts[0]; // Extract the password part
-				email = parts[1];    // Extract the email part
-				username = parts[2];    // Extract the email part
-
-				// Now you can use the password and email variables as needed
-
-			}
-			string htmlContent = "<div style=\"font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;\">" +
-						"<div style=\"max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">" +
-							"<div style=\"text-align: center;\">" +
-								"<h1 style=\"margin: 0; font-size: 28px;\">LMS</h1>" +
-							"</div>" +
-							"<div style=\"text-align: center; margin-top: 20px;\">" +
-								"<h2 style=\"margin: 0;\">Get started</h2>" +
-								"<p style=\"margin: 10px 0; font-size: 16px;\">Your account has been created on the LMS. Below are your system generated credentials.</p>" +
-								"<p style=\"margin: 10px 0; font-size: 16px;\">Please use this credentials for login</p>" +
-								"<div style=\"text-align: center; margin-top: 20px;\">" +
-									"<p style=\"margin: 5px 0; font-size: 16px;\"><strong>Username:</strong> " + username + " </p>" +
-									"<p style=\"margin: 5px 0; font-size: 16px;\"><strong>Password:</strong> " + userpassword + " </p>" +
-								"</div>" +
-
-							"</div>" +
-						"</div>" +
-					"</div>";
-
-			// Split email addresses
-			EmailConfigureDto user = new EmailConfigureDto();
-			dynamic emailDetails = await _usermaster.GetEmailId(user);
-
-
-
-
-
-			if (emailDetails != null)
-			{
-				// Use the retrieved email configuration details to send the email
-				var message = new MimeMessage();
-				message.From.Add(new MailboxAddress("Rensa Tubes", emailDetails.Value.Data.email)); // set your email
-				message.To.Add(new MailboxAddress(null, email.Trim()));
-
-				message.Subject = title;
-				var bodyBuilder = new BodyBuilder();
-				bodyBuilder.HtmlBody = htmlContent;
-				message.Body = bodyBuilder.ToMessageBody();
-
-				try
-				{
-					using (var client = new SmtpClient())
-					{
-						// Connect to the SMTP server and send the email
-						client.Connect(emailDetails.Value.Data.smtp_server, emailDetails.Value.Data.smtp_port, false);
-						client.Authenticate(emailDetails.Value.Data.email, emailDetails.Value.Data.password);
-						client.Send(message);
-						client.Disconnect(true);
-					}
-				}
-				catch (Exception ex)
-				{
-					// Handle SMTP client errors
-					Console.WriteLine($"Failed to send email: {ex.Message}");
-				}
-			}
-			else
-			{
-				// Handle case where email configuration details are not found
-				Console.WriteLine("Email configuration details not found.");
-			}
-
-			
-
-		}
-
-
-
-		[HttpPost("Delete")]
-		public async Task<IActionResult> Delete([FromBody] UserMasterDto user)
-		{
+        [HttpPost]
+        public async Task<IActionResult> Insert([FromBody] UserMasterDto user)
+        {
             try
             {
                 if (user.BaseModel == null)
@@ -329,39 +94,154 @@ namespace PoliceRecruitmentAPI.Controllers
                     user.BaseModel = new BaseModel();
                 }
 
-                user.BaseModel.OperationType = "Delete";
-                var usertDetails = await _usermaster.UserMaster(user);
-                return usertDetails;
+                if (user.um_id == null)
+                {
+                    user.BaseModel.OperationType = "Insert";
+                }
+                else
+                {
+                    user.um_updateddate = DateTime.Now;
+                    user.BaseModel.OperationType = "Update";
+                }
+                dynamic createduser = await _usermaster.UserMaster(user);
+                var outcomeidvalue = createduser.Value.Outcome.OutcomeId;
+                //if (outcomeidvalue == 1)
+                //{
+
+                //	var datavalue = createduser.Value.Outcome.OutcomeDetail;
+
+                //	await SendNo(datavalue);
+                //}
+
+                return createduser;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // Using LogErrorResponse model for cleaner code
-                var errorResponse = new LogErrorResponse
-                {
-                    ErrorId = Guid.NewGuid().ToString("N"),
-                    Timestamp = DateTime.Now,
-                    Message = ex.Message,
-                    StackTrace = ex.StackTrace,
-                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
-                };
-
-                // Log error details
-                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
-                     LogErrorResponse.SEPARATOR_LINE,
-                     errorResponse.ErrorId,
-                     errorResponse.FormattedTimestamp,
-                     errorResponse.Message,
-                     errorResponse.StackTrace,
-                     LogErrorResponse.SEPARATOR_LINE
-                 );
-
-                return new JsonResult(errorResponse)
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
+                throw;
             }
         }
-    
+
+
+        [HttpGet("Shuffle")]
+        public async Task<IActionResult> Shuffle([FromQuery] UserMasterDto user)
+        {
+            try
+            {
+
+
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "Shuffle";
+
+                dynamic createduser = await _usermaster.UserMaster(user);
+                var outcomeidvalue = createduser.Value.Outcome.OutcomeId;
+
+
+                return createduser;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private async Task SendNo(dynamic datavalue2)
+        {
+
+            string[] parts = datavalue2.Split(';');
+            string userpassword = "";
+            string username = "";
+            string title = "Login Credentials";
+            string email = "";
+            if (parts.Length == 3)
+            {
+                userpassword = parts[0]; // Extract the password part
+                email = parts[1];    // Extract the email part
+                username = parts[2];    // Extract the email part
+
+                // Now you can use the password and email variables as needed
+
+            }
+            string htmlContent = "<div style=\"font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;\">" +
+                        "<div style=\"max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">" +
+                            "<div style=\"text-align: center;\">" +
+                                "<h1 style=\"margin: 0; font-size: 28px;\">LMS</h1>" +
+                            "</div>" +
+                            "<div style=\"text-align: center; margin-top: 20px;\">" +
+                                "<h2 style=\"margin: 0;\">Get started</h2>" +
+                                "<p style=\"margin: 10px 0; font-size: 16px;\">Your account has been created on the LMS. Below are your system generated credentials.</p>" +
+                                "<p style=\"margin: 10px 0; font-size: 16px;\">Please use this credentials for login</p>" +
+                                "<div style=\"text-align: center; margin-top: 20px;\">" +
+                                    "<p style=\"margin: 5px 0; font-size: 16px;\"><strong>Username:</strong> " + username + " </p>" +
+                                    "<p style=\"margin: 5px 0; font-size: 16px;\"><strong>Password:</strong> " + userpassword + " </p>" +
+                                "</div>" +
+
+                            "</div>" +
+                        "</div>" +
+                    "</div>";
+
+            // Split email addresses
+            EmailConfigureDto user = new EmailConfigureDto();
+            dynamic emailDetails = await _usermaster.GetEmailId(user);
+
+
+
+
+
+            if (emailDetails != null)
+            {
+                // Use the retrieved email configuration details to send the email
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress("Rensa Tubes", emailDetails.Value.Data.email)); // set your email
+                message.To.Add(new MailboxAddress(null, email.Trim()));
+
+                message.Subject = title;
+                var bodyBuilder = new BodyBuilder();
+                bodyBuilder.HtmlBody = htmlContent;
+                message.Body = bodyBuilder.ToMessageBody();
+
+                try
+                {
+                    using (var client = new SmtpClient())
+                    {
+                        // Connect to the SMTP server and send the email
+                        client.Connect(emailDetails.Value.Data.smtp_server, emailDetails.Value.Data.smtp_port, false);
+                        client.Authenticate(emailDetails.Value.Data.email, emailDetails.Value.Data.password);
+                        client.Send(message);
+                        client.Disconnect(true);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Handle SMTP client errors
+                    Console.WriteLine($"Failed to send email: {ex.Message}");
+                }
+            }
+            else
+            {
+                // Handle case where email configuration details are not found
+                Console.WriteLine("Email configuration details not found.");
+            }
+
+
+
+        }
+
+
+
+        [HttpPost("Delete")]
+        public async Task<IActionResult> Delete([FromBody] UserMasterDto user)
+        {
+            if (user.BaseModel == null)
+            {
+                user.BaseModel = new BaseModel();
+            }
+
+            user.BaseModel.OperationType = "Delete";
+            var usertDetails = await _usermaster.UserMaster(user);
+            return usertDetails;
+        }
 
 
 
@@ -496,17 +376,27 @@ namespace PoliceRecruitmentAPI.Controllers
             }
         }
         [HttpPost("upload")]
+
         public async Task<IActionResult> UploadExcel(IFormFile file, [FromForm] string userId, [FromForm] string um_recruitid)
         {
-            
-            
+
+
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            UserMasterDto user = new UserMasterDto { BaseModel = new BaseModel { OperationType = "InsertData" } };
+            UserMasterDto user = new UserMasterDto();
             user.UserId = userId;
             user.um_recruitid = um_recruitid;
+            if (user.BaseModel == null)
+            {
+                user.BaseModel = new BaseModel();
+            }
+
+
+
             if (file == null || file.Length == 0)
             {
-                return Ok(new Outcome { OutcomeId = 0, OutcomeDetail = "No data in the excel!" });
+                return StatusCode(422, new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
+
+                //return Ok(new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
             }
 
             string[] allowedFileExtensions = { ".xls", ".xlsx", ".xlsm", ".csv" };
@@ -517,74 +407,356 @@ namespace PoliceRecruitmentAPI.Controllers
             }
 
             DataTable dataTable = new DataTable();
+            List<string> errorLog = new List<string>();
+            HashSet<string> usernamesSeen = new HashSet<string>();  // Track seen usernames
+            HashSet<string> BukkelNosSeen = new HashSet<string>();
+
+            user.BaseModel.OperationType = "ExistingCandidateUserName";
+            dynamic existingUsernames1 = await _usermaster.UserMaster(user);
+
+            // Manually loop through the dynamic data and extract the usernames
+            HashSet<string> existingUsernames = new HashSet<string>();
+            foreach (var userObj in existingUsernames1.Value.Data)
+            {
+                string username = userObj.um_user_name?.ToString().Trim();
+                if (!string.IsNullOrEmpty(username))
+                {
+                    existingUsernames.Add(username);
+                }
+            }
+
+            // Do the same for tokenNos and applicationNos
+            user.BaseModel.OperationType = "ExistingCandidateBukkelNo";
+            dynamic existingBukkelNo1 = await _usermaster.UserMaster(user);
+
+            HashSet<string> existingBukkelNos = new HashSet<string>();
+            foreach (var BukkelNoObj in existingBukkelNo1.Value.Data)
+            {
+                string BukkelNo = BukkelNoObj.um_bukkel_no?.ToString().Trim();
+                if (!string.IsNullOrEmpty(BukkelNo))
+                {
+                    existingBukkelNos.Add(BukkelNo);
+                }
+            }
+
+            user.BaseModel.OperationType = "ExistingDutyName";
+            dynamic existingDutyname1 = await _usermaster.UserMaster(user);
+
+            HashSet<string> existingDutyname = new HashSet<string>();
+            foreach (var BukkelNoObj in existingBukkelNo1.Value.Data)
+            {
+                string Dutyname = BukkelNoObj.um_bukkel_no?.ToString().Trim();
+                if (!string.IsNullOrEmpty(Dutyname))
+                {
+                    existingBukkelNos.Add(Dutyname);
+                }
+            }
 
             using (var stream = new MemoryStream())
             {
                 await file.CopyToAsync(stream);
                 stream.Position = 0;
 
-                MemoryStream convertedStream = new MemoryStream();
+                // Handling CSV separately
                 if (Path.GetExtension(file.FileName).Equals(".csv", StringComparison.OrdinalIgnoreCase))
                 {
-                    FileConverter.ConvertCsvToXlsx(stream, convertedStream);
-                }
-                else if (Path.GetExtension(file.FileName).Equals(".xls", StringComparison.OrdinalIgnoreCase))
-                {
-                    FileConverter.ConvertXlsToXlsx(stream, convertedStream);
-                }
-
-                MemoryStream newStream = convertedStream.Length > 0 ? convertedStream : stream;
-                newStream.Position = 0;
-
-                using (var package = new ExcelPackage(newStream))
-                {
-                    var worksheet = package.Workbook.Worksheets[0];
-                    int rowCount = worksheet.Dimension.Rows;
-                    int colCount = worksheet.Dimension.Columns;
-
-                    if (rowCount == 1)
+                    using (var reader = new StreamReader(stream))
+                    using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
                     {
-                        return Ok(new Outcome { OutcomeId = 0, OutcomeDetail = "No data in the excel!" });
-                    }
-
-                    // Adding columns to DataTable based on Excel header row (first row)
-                    for (int col = 1; col <= colCount; col++)
+                        // Make sure CsvHelper knows to handle quoted values properly
+                        Quote = '"',
+                        Delimiter = ",",
+                        BadDataFound = null // To ignore invalid data rows
+                    }))
                     {
-                        string columnName = worksheet.Cells[1, col].Value?.ToString();
-                        if (!string.IsNullOrEmpty(columnName))
+                        var records = csv.GetRecords<dynamic>().ToList();
+
+                        // Creating DataTable based on CSV data
+                        if (records.Any())
                         {
-                            dataTable.Columns.Add(new DataColumn(columnName, typeof(string)));
+                            // Add columns to DataTable
+                            var header = ((IDictionary<string, object>)records[0]).Keys.ToList();
+                            foreach (var column in header)
+                            {
+                                dataTable.Columns.Add(new DataColumn(column, typeof(string)));
+                            }
+
+                            // Add rows to DataTable
+                            foreach (var record in records)
+                            {
+                                var dataRow = dataTable.NewRow();
+                                foreach (var column in header)
+                                {
+                                    dataRow[column] = ((IDictionary<string, object>)record)[column]?.ToString();
+                                }
+
+                                string username = dataRow["User Name"]?.ToString()?.Trim();
+                                if (string.IsNullOrEmpty(username))
+                                {
+                                    errorLog.Add($"BlankUserName :{username}");
+                                }
+                                else
+                                if (usernamesSeen.Contains(username) || existingUsernames.Contains(username))
+                                {
+                                    errorLog.Add($"DuplicateUsername : {username}");
+                                }
+                                else
+                                {
+                                    usernamesSeen.Add(username);
+                                }
+
+                                string BukkelNo = dataRow["Bukkel No"]?.ToString()?.Trim();
+                                if (string.IsNullOrEmpty(BukkelNo))
+                                {
+                                    errorLog.Add($"BlankBukkelNo :{BukkelNo}");
+                                }
+                                else
+                                if (BukkelNosSeen.Contains(BukkelNo) || existingBukkelNos.Contains(BukkelNo))
+                                {
+                                    errorLog.Add($"DuplicateBukkelNo : {BukkelNo}");
+                                }
+                                else
+                                {
+                                    BukkelNosSeen.Add(BukkelNo);
+                                }
+                                string DutyNames = dataRow["Duty"]?.ToString()?.Trim();
+                                if (string.IsNullOrEmpty(DutyNames))
+                                {
+                                    errorLog.Add($"BlankDutyName :{DutyNames}");
+                                }
+                                else
+                                if (usernamesSeen.Contains(DutyNames) || existingUsernames.Contains(DutyNames))
+                                {
+                                    usernamesSeen.Add(DutyNames);
+                                   
+                                }
+                                else
+                                {
+                                    errorLog.Add($"DutyNotAvailable : {DutyNames}");
+                                }
+
+                                dataTable.Rows.Add(dataRow);
+                            }
+                        }
+                        else
+                        {
+                            return StatusCode(422, new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
+
+                            //return Ok(new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
+
                         }
                     }
-
-                    // Adding rows to DataTable from Excel data
-                    for (int row = 2; row <= rowCount; row++)
+                }
+                else
+                {
+                    // If it’s an Excel file (XLS, XLSX), use EPPlus to convert and process
+                    MemoryStream convertedStream = new MemoryStream();
+                    if (Path.GetExtension(file.FileName).Equals(".xls", StringComparison.OrdinalIgnoreCase))
                     {
-                        var dataRow = dataTable.NewRow();
+                        FileConverter.ConvertXlsToXlsx(stream, convertedStream);
+                    }
+
+                    MemoryStream newStream = convertedStream.Length > 0 ? convertedStream : stream;
+                    newStream.Position = 0;
+
+                    using (var package = new ExcelPackage(newStream))
+                    {
+                        var worksheet = package.Workbook.Worksheets[0];
+                        int rowCount = worksheet.Dimension.Rows;
+                        int colCount = worksheet.Dimension.Columns;
+
+                        if (rowCount == 1)
+                        {
+                            return StatusCode(422, new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
+
+                            //return Ok(new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
+                        }
+
+                        // Adding columns to DataTable based on Excel header row (first row)
                         for (int col = 1; col <= colCount; col++)
                         {
-                            dataRow[col - 1] = worksheet.Cells[row, col].Value?.ToString();
+                            string columnName = worksheet.Cells[1, col].Value?.ToString();
+                            if (!string.IsNullOrEmpty(columnName))
+                            {
+                                dataTable.Columns.Add(new DataColumn(columnName, typeof(string)));
+                            }
                         }
-                        dataTable.Rows.Add(dataRow);
+
+                        for (int row = 2; row <= rowCount; row++)
+                        {
+                            var dataRow = dataTable.NewRow();
+                            for (int col = 1; col <= colCount; col++)
+                            {
+                                dataRow[col - 1] = worksheet.Cells[row, col].Value?.ToString();
+                            }
+
+                            string username = dataRow["User Name"]?.ToString()?.Trim();
+                            if (string.IsNullOrEmpty(username))
+                            {
+                                errorLog.Add($"BlankUserName :{username}");
+                            }
+                            else
+                            if (usernamesSeen.Contains(username) || existingUsernames.Contains(username))
+                            {
+                                errorLog.Add($"DuplicateUsername: {username}");  //
+                            }
+                            else
+                            {
+                                usernamesSeen.Add(username);
+                            }
+
+                            string BukkelNo = dataRow["Bukkel No"]?.ToString()?.Trim();
+                            if (string.IsNullOrEmpty(BukkelNo))
+                            {
+                                errorLog.Add($"BlankBukkelNo :{BukkelNo}");
+                            }
+                            else
+                           if (BukkelNosSeen.Contains(BukkelNo) || existingBukkelNos.Contains(BukkelNo))
+                            {
+                                errorLog.Add($"DuplicateBukkelNo: {BukkelNo}");
+                            }
+                            else
+                            {
+                                BukkelNosSeen.Add(BukkelNo);
+                            }
+                            string DutyNames = dataRow["Duty"]?.ToString()?.Trim();
+                            if (string.IsNullOrEmpty(DutyNames))
+                            {
+                                errorLog.Add($"BlankDutyName :{DutyNames}");
+                            }
+                            else
+                            if (usernamesSeen.Contains(DutyNames) || existingUsernames.Contains(DutyNames))
+                            {
+                                usernamesSeen.Add(DutyNames);
+
+                            }
+                            else
+                            {
+                                errorLog.Add($"DutyNotAvailable : {DutyNames}");
+                            }
+
+                            dataTable.Rows.Add(dataRow);
+                        }
                     }
                 }
             }
+            var duplicateUsername = errorLog.Where(e => e.Contains("DuplicateUsername")).ToList();
+            var duplicateBukkelNo = errorLog.Where(e => e.Contains("DuplicateBukkelNo")).ToList();
+            var blankUserName = errorLog.Where(e => e.Contains("BlankUserName")).ToList();
+            var blankBukkelNo = errorLog.Where(e => e.Contains("BlankBukkelNo")).ToList();
+            var dutynames = errorLog.Where(e => e.Contains("DutyNotAvailable")).ToList();
 
+            if (errorLog.Any())
+            {
+                var response = new
+                {
+                    OutcomeId = 4,
+                    DuplicateUsernameErrors = duplicateUsername,
+                    DuplicateBukkelNoErrors = duplicateBukkelNo,
+                    BlankUserNameErrors = blankUserName,
+                    BlankBukkelNoErrors = blankBukkelNo,
+                    DutyNotAvailable= dutynames
+                };
+                return StatusCode(409, response);
+                //return StatusCode(409, new Outcome { OutcomeId = 4, OutcomeDetail = string.Join("; ", errorLog) });
+
+            }
+            user.BaseModel.OperationType = "InsertData";
             user.DataTable = dataTable;
             var parameter = await _usermaster.UserMaster(user);
             return parameter;
         }
 
+        //public async Task<IActionResult> UploadExcel(IFormFile file, [FromForm] string userId, [FromForm] string um_recruitid)
+        //{
+
+
+        //    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        //    UserMasterDto user = new UserMasterDto { BaseModel = new BaseModel { OperationType = "InsertData" } };
+        //    user.UserId = userId;
+        //    user.um_recruitid = um_recruitid;
+        //    if (file == null || file.Length == 0)
+        //    {
+        //        return Ok(new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
+        //    }
+
+        //    string[] allowedFileExtensions = { ".xls", ".xlsx", ".xlsm", ".csv" };
+        //    if (!allowedFileExtensions.Contains(Path.GetExtension(file.FileName)))
+        //    {
+        //        ModelState.AddModelError("File", "Please upload a file of type: " + string.Join(", ", allowedFileExtensions));
+        //        return BadRequest(ModelState);
+        //    }
+
+        //    DataTable dataTable = new DataTable();
+
+        //    using (var stream = new MemoryStream())
+        //    {
+        //        await file.CopyToAsync(stream);
+        //        stream.Position = 0;
+
+        //        MemoryStream convertedStream = new MemoryStream();
+        //        if (Path.GetExtension(file.FileName).Equals(".csv", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            FileConverter.ConvertCsvToXlsx(stream, convertedStream);
+        //        }
+        //        else if (Path.GetExtension(file.FileName).Equals(".xls", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            FileConverter.ConvertXlsToXlsx(stream, convertedStream);
+        //        }
+
+        //        MemoryStream newStream = convertedStream.Length > 0 ? convertedStream : stream;
+        //        newStream.Position = 0;
+
+        //        using (var package = new ExcelPackage(newStream))
+        //        {
+        //            var worksheet = package.Workbook.Worksheets[0];
+        //            int rowCount = worksheet.Dimension.Rows;
+        //            int colCount = worksheet.Dimension.Columns;
+
+        //            if (rowCount == 1)
+        //            {
+        //               return StatusCode(422, new Outcome { OutcomeId = 3, OutcomeDetail = "No data in the excel!" });
+
+        //            }
+
+        //            // Adding columns to DataTable based on Excel header row (first row)
+        //            for (int col = 1; col <= colCount; col++)
+        //            {
+        //                string columnName = worksheet.Cells[1, col].Value?.ToString();
+        //                if (!string.IsNullOrEmpty(columnName))
+        //                {
+        //                    dataTable.Columns.Add(new DataColumn(columnName, typeof(string)));
+        //                }
+        //            }
+
+        //            // Adding rows to DataTable from Excel data
+        //            for (int row = 2; row <= rowCount; row++)
+        //            {
+        //                var dataRow = dataTable.NewRow();
+        //                for (int col = 1; col <= colCount; col++)
+        //                {
+        //                    dataRow[col - 1] = worksheet.Cells[row, col].Value?.ToString();
+        //                }
+        //                dataTable.Rows.Add(dataRow);
+        //            }
+        //        }
+        //    }
+
+        //    user.DataTable = dataTable;
+        //    var parameter = await _usermaster.UserMaster(user);
+        //    return parameter;
+        //}
+
         [HttpGet("download")]
         public IActionResult DownloadExcel()
         {
             // Define the column names for the Excel file
-            string[] columnNames = { "um_user_name",  "um_staffname", "um_bukkel_no", "um_post", "um_phone_no" };
+            string[] columnNames = { "um_user_name", "um_staffname", "um_bukkel_no", "um_post", "um_phone_no" };
 
             // Set EPPlus LicenseContext to NonCommercial (or Commercial if applicable)
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            // Create a new Excel package
+
             using (var package = new ExcelPackage())
             {
                 // Add a new worksheet

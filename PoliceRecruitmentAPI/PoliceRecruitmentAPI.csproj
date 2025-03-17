@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PoliceRecruitmentAPI.Core\PoliceRecruitmentAPI.Core.csproj" />
     <ProjectReference Include="..\PoliceRecruitmentAPI.Services\PoliceRecruitmentAPI.Services.csproj" />
   </ItemGroup>
 

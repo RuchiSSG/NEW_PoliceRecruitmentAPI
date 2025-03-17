@@ -9,6 +9,8 @@ using PoliceRecruitmentAPI.Services.Interfaces;
 using System.Net.NetworkInformation;
 using PoliceRecruitmentAPI.Core;
 using PoliceRecruitmentAPI.Core.ModelDtos;
+using Microsoft.AspNetCore.Mvc;
+
 
 namespace PoliceRecruitmentAPI.Services.ApiServices
 {
@@ -22,10 +24,13 @@ namespace PoliceRecruitmentAPI.Services.ApiServices
         private int _hexdataCount;
         private const int MAX_DATA_COUNT = 1000;
         private string _accessToken;
+        private string _refreshToken;
         private static string _cachedTag = null;
         private static DateTime _lastReadTime = DateTime.MinValue;
         private string _connectionStatus = "Connected";
         private bool _ethernetConnected = true;
+        private string _userid;
+        private string _recruitid;
 
         public Rfid(int port = 9090)
         {
@@ -55,6 +60,14 @@ namespace PoliceRecruitmentAPI.Services.ApiServices
                 // Create a fallback listener to prevent null references
                 _tcpListener = new TcpListener(IPAddress.Loopback, port);
             }
+        }
+
+        public void SetParameters(string accessToken, string refreshToken, string userid, string recruitid)
+        {
+            _accessToken = accessToken;
+            _refreshToken = refreshToken;
+            _userid = userid;
+            _recruitid = recruitid;
         }
 
         public async Task StartListenerAsync()
@@ -136,7 +149,7 @@ namespace PoliceRecruitmentAPI.Services.ApiServices
             }
         }
 
-        public async Task<RfidResult> GetLatestTagAsync()
+        public async Task<IActionResult> GetLatestTagAsync(RfidOutcome rfidTagDto)
         {
             if (!_isRunning)
             {
@@ -146,21 +159,46 @@ namespace PoliceRecruitmentAPI.Services.ApiServices
             // Check Ethernet connection status on every call
             CheckEthernetConnection();
 
-            // Create a result object with current connection status
-            var result = new RfidResult
+            // Create the result and outcome objects
+            var result1 = new RfidResult
             {
                 ConnectionStatus = _connectionStatus,
                 IsConnected = _ethernetConnected
             };
 
+            var outcome = new Outcome
+            {
+                OutcomeId = 1,
+                OutcomeDetail = "GetLatestTag",
+            };
+
+            var Model = new RfidOutcome
+            {
+                UserId = rfidTagDto.UserId,
+                refershtoken = _refreshToken,
+                Result = result1,
+                TagId = null,
+                RecruitId=rfidTagDto.RecruitId
+            };
+
+            var result = new Result
+            {
+                Outcome = outcome,
+                Data = Model,
+                UserId = Model.UserId
+            };
+
             // If there's a connection issue, always return null tag with error message
             if (!_ethernetConnected)
             {
-                result.Tag = null;
-                result.Message = _connectionStatus;
-                // Clear cached tag when Ethernet is disconnected
+                result1.Tag = null;
+                result1.Message = _connectionStatus;
                 _cachedTag = null;
-                return result;
+
+                return new ObjectResult(result)
+                {
+                    StatusCode = 400
+                };
             }
 
             int retries = 10; // Max wait time: 10 seconds
@@ -171,40 +209,61 @@ namespace PoliceRecruitmentAPI.Services.ApiServices
                 // Recheck Ethernet connection on each retry
                 if (!CheckEthernetConnection())
                 {
-                    result.Tag = null;
-                    result.ConnectionStatus = _connectionStatus;
-                    result.IsConnected = false;
-                    result.Message = _connectionStatus;
-                    return result;
+                    result1.Tag = null;
+                    result1.ConnectionStatus = _connectionStatus;
+                    result1.IsConnected = false;
+                    result1.Message = _connectionStatus;
+
+                    outcome.OutcomeId = 0; // Set to failure
+
+                    return new ObjectResult(result)
+                    {
+                        StatusCode = 400
+                    };
                 }
 
                 lock (_lock)
                 {
                     if (!string.IsNullOrEmpty(_latestTag))
                     {
-                        _cachedTag = _latestTag; // Update the cached tag
-                        result.Tag = _latestTag;
-                        result.Message = "Tag read successfully";
+                        _cachedTag = _latestTag; // Fixed pointer syntax
+                        result1.Tag = _latestTag;
+                        Model.TagId = _latestTag; // Store in the top-level property as well
+                        result1.Message = "Tag read successfully";
                         Console.WriteLine($"Returning new tag: {_latestTag}");
-                        return result;
+
+                        return new ObjectResult(result)
+                        {
+                            StatusCode = 200
+                        };
                     }
+
                     if (!string.IsNullOrEmpty(_cachedTag))
                     {
-                        result.Tag = _cachedTag;
-                        result.Message = "Tag read successfully";
+                        result1.Tag = _cachedTag;
+                        Model.TagId = _cachedTag; // Store in the top-level property as well
+                        result1.Message = "Tag read successfully";
                         Console.WriteLine($"Returning cached tag: {_cachedTag}");
-                        return result;
+
+                        return new ObjectResult(result)
+                        {
+                            StatusCode = 200
+                        };
                     }
                 }
             }
 
             Console.WriteLine("No new tag detected!"); // Debugging
-            result.Message = "No tag read yet";
-            result.Tag = null;
-            return result;
+            result1.Message = "No tag read yet";
+            result1.Tag = null;
+            outcome.OutcomeId = 0; // Set to failure when no tag is found
+
+            return new ObjectResult(result)
+            {
+                StatusCode = 200
+            };
         }
 
-        
         private bool CheckEthernetConnection()
         {
             try

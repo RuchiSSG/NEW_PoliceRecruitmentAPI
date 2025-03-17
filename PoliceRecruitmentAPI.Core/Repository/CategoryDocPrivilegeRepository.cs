@@ -54,7 +54,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
                     {
                         return new ObjectResult(result)
                         {
-                            StatusCode = 408
+                            StatusCode = 423
                         };
                     }
                     else
@@ -113,7 +113,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
                     {
                         return new ObjectResult(result)
                         {
-                            StatusCode = 408
+                            StatusCode = 423
                         };
                     }
                     else

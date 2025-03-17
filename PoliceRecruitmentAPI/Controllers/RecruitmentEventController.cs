@@ -120,6 +120,7 @@ namespace PoliceRecruitmentAPI.Controllers
                 dataTable.Columns.Add("score", typeof(string));
                 dataTable.Columns.Add("gender", typeof(string));
                 dataTable.Columns.Add("category", typeof(string));
+                dataTable.Columns.Add("kilo", typeof(string));
 
 
                 foreach (var privilage in user.RecruitmentConfig)
@@ -129,7 +130,8 @@ namespace PoliceRecruitmentAPI.Controllers
                         privilage.maxValue,
                         privilage.score,
                         privilage.gender,
-                        privilage.category
+                        privilage.category,
+                         privilage.kilo
 
                     );
                 }

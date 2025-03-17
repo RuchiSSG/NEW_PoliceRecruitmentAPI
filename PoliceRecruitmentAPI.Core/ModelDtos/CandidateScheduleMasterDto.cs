@@ -17,6 +17,7 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
         public DateTime? NewScheduleDate { get; set; }
         public string?  ScheduleID { get; set; }
         public string? CandidateId { get; set; }
+        public string? Isactive { get; set; }
 
     }
 }

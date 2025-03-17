@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
 using System.IO;
+using common;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,7 +46,8 @@ try
 
     // Add session state service
     builder.Services.AddDistributedMemoryCache();
-    builder.Services.AddSession(options => {
+    builder.Services.AddSession(options =>
+    {
         options.IdleTimeout = TimeSpan.FromMinutes(60);
         options.Cookie.Name = "ephr";
         options.Cookie.IsEssential = true;
@@ -107,7 +110,7 @@ try
     builder.Services.AddScoped<IEventAccessService, EventAccessService>().AddScoped<EventAccessRepository>();
     builder.Services.AddScoped<ICandidateScheduleMasterService, CandidateScheduleMasterService>().AddScoped<CandidateScheduleMasterRepository>();
     builder.Services.AddScoped<IRfidRepository, Rfid>();
-
+   
 
     builder.Services.AddHttpClient();
 

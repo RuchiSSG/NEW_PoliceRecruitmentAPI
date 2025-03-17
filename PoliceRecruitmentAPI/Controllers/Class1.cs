@@ -176,34 +176,34 @@ namespace common
             }
             catch (Exception ex)
             {
-                var errorResponse = new LogErrorResponse
-                {
-                    ErrorId = Guid.NewGuid().ToString("N"),
-                    Timestamp = DateTime.Now,
-                    Message = ex.Message,
-                    StackTrace = ex.StackTrace,
-                    OperationType = data?.Data?.BaseModel?.OperationType ?? "OnActionExecuted"
-                };
+                //var errorResponse = new LogErrorResponse
+                //{
+                //    ErrorId = Guid.NewGuid().ToString("N"),
+                //    Timestamp = DateTime.Now,
+                //    Message = ex.Message,
+                //    StackTrace = ex.StackTrace,
+                //    OperationType = data?.Data?.BaseModel?.OperationType ?? "OnActionExecuted"
+                //};
 
-                _logger.LogError(ex,
-                    "{SeparatorLine}\n" +
-                    "Error ID: {ErrorId}\t" +
-                    "DateTime: {FormattedTimestamp}\n" +
-                    "Error Message: {Message}\n" +
-                    "Stack Trace: {StackTrace}\n" +
-                    "{SeparatorLine}",
-                    LogErrorResponse.SEPARATOR_LINE,
-                    errorResponse.ErrorId,
-                    errorResponse.FormattedTimestamp,
-                    errorResponse.Message,
-                    errorResponse.StackTrace,
-                    LogErrorResponse.SEPARATOR_LINE
-                );
+                //_logger.LogError(ex,
+                //    "{SeparatorLine}\n" +
+                //    "Error ID: {ErrorId}\t" +
+                //    "DateTime: {FormattedTimestamp}\n" +
+                //    "Error Message: {Message}\n" +
+                //    "Stack Trace: {StackTrace}\n" +
+                //    "{SeparatorLine}",
+                //    LogErrorResponse.SEPARATOR_LINE,
+                //    errorResponse.ErrorId,
+                //    errorResponse.FormattedTimestamp,
+                //    errorResponse.Message,
+                //    errorResponse.StackTrace,
+                //    LogErrorResponse.SEPARATOR_LINE
+                //);
 
-                context.Result = new JsonResult(errorResponse)
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
+                //context.Result = new JsonResult(errorResponse)
+                //{
+                //    StatusCode = StatusCodes.Status500InternalServerError
+                //};
             }
 
 
@@ -394,38 +394,38 @@ namespace common
             }
             catch (Exception ex)
             {
-                var loggerFactory = context.HttpContext.RequestServices.GetService<ILoggerFactory>();
-                var logger = loggerFactory.CreateLogger<ExampleFilterAttribute>();
+                //var loggerFactory = context.HttpContext.RequestServices.GetService<ILoggerFactory>();
+                //var logger = loggerFactory.CreateLogger<ExampleFilterAttribute>();
 
-                var errorResponse = new LogErrorResponse
-                {
-                    ErrorId = Guid.NewGuid().ToString("N"),
-                    Timestamp = DateTime.Now,
-                    Message = ex.Message,
-                    StackTrace = ex.StackTrace,
-                    OperationType = context.ActionDescriptor.DisplayName ?? "Unknown"
-                };
+                //var errorResponse = new LogErrorResponse
+                //{
+                //    ErrorId = Guid.NewGuid().ToString("N"),
+                //    Timestamp = DateTime.Now,
+                //    Message = ex.Message,
+                //    StackTrace = ex.StackTrace,
+                //    OperationType = context.ActionDescriptor.DisplayName ?? "Unknown"
+                //};
 
-                logger.LogError(ex,
-                    "{SeparatorLine}\n" +
-                    "Error ID: {ErrorId}\t" +
-                    "DateTime: {FormattedTimestamp}\n" +
-                    "Error Message: {Message}\n" +
-                    "Stack Trace: {StackTrace}\n" +
-                    "{SeparatorLine}",
-                    LogErrorResponse.SEPARATOR_LINE,
-                    errorResponse.ErrorId,
-                    errorResponse.FormattedTimestamp,
-                    errorResponse.Message,
-                    errorResponse.StackTrace,
-                    LogErrorResponse.SEPARATOR_LINE
-                );
+                //logger.LogError(ex,
+                //    "{SeparatorLine}\n" +
+                //    "Error ID: {ErrorId}\t" +
+                //    "DateTime: {FormattedTimestamp}\n" +
+                //    "Error Message: {Message}\n" +
+                //    "Stack Trace: {StackTrace}\n" +
+                //    "{SeparatorLine}",
+                //    LogErrorResponse.SEPARATOR_LINE,
+                //    errorResponse.ErrorId,
+                //    errorResponse.FormattedTimestamp,
+                //    errorResponse.Message,
+                //    errorResponse.StackTrace,
+                //    LogErrorResponse.SEPARATOR_LINE
+                //);
 
                 // Return error response instead of throwing
-                context.Result = new JsonResult(errorResponse)
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
+                //context.Result = new JsonResult(errorResponse)
+                //{
+                //    StatusCode = StatusCodes.Status500InternalServerError
+                //};
             }
 
 

@@ -40,7 +40,8 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
         public string? score { get; set; }
 		public string? gender { get; set; }
         public string? category { get; set; }
-        
+        public string?  kilo { get; set; }
+
 
     }
 
