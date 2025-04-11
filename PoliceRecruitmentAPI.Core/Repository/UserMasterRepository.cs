@@ -32,7 +32,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
                 {
                     var sqlConnection = (Microsoft.Data.SqlClient.SqlConnection)connection;
                     await sqlConnection.OpenAsync();
-                    var queryResult = await connection.QueryMultipleAsync("proc_UserMaster", parameter, commandType: CommandType.StoredProcedure);
+                    var queryResult = await connection.QueryMultipleAsync("proc_UserMaster", parameter, commandType: CommandType.StoredProcedure, commandTimeout: 300);
                     var Model = queryResult.Read<Object>().ToList();
                     var outcome = queryResult.ReadSingleOrDefault<Outcome>();
                     var outcomeId = outcome?.OutcomeId ?? 0;
@@ -98,7 +98,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
 				{
 					var sqlConnection = (Microsoft.Data.SqlClient.SqlConnection)connection;
 					await sqlConnection.OpenAsync();
-					var queryResult = await connection.QueryMultipleAsync("proc_UserMaster", parameter, commandType: CommandType.StoredProcedure);
+					var queryResult = await connection.QueryMultipleAsync("proc_UserMaster", parameter, commandType: CommandType.StoredProcedure, commandTimeout: 300);
 					var Model = queryResult.Read<Object>().ToList();
 					var outcome = queryResult.ReadSingleOrDefault<Outcome>();
 					var outcomeId = outcome?.OutcomeId ?? 0;
@@ -155,7 +155,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
                 {
                     var sqlConnection = (Microsoft.Data.SqlClient.SqlConnection)connection;
                     await sqlConnection.OpenAsync();
-                    var queryResult = await connection.QueryMultipleAsync("proc_UserMaster", parameter, commandType: CommandType.StoredProcedure);
+                    var queryResult = await connection.QueryMultipleAsync("proc_UserMaster", parameter, commandType: CommandType.StoredProcedure, commandTimeout: 300);
                     var Model = queryResult.ReadSingleOrDefault<Object>();
                     var outcome = queryResult.ReadSingleOrDefault<Outcome>();
                     var outcomeId = outcome?.OutcomeId ?? 0;
@@ -201,7 +201,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
 
 
 					
-					var queryResult = await connection.QueryMultipleAsync("ProcEmailConfigure", commandType: CommandType.StoredProcedure);
+					var queryResult = await connection.QueryMultipleAsync("ProcEmailConfigure", commandType: CommandType.StoredProcedure, commandTimeout: 300);
 					var Model = queryResult.ReadSingleOrDefault<Object>();
 					var outcome = queryResult.ReadSingleOrDefault<Outcome>();
 					var outcomeId = outcome?.OutcomeId ?? 0;

@@ -26,73 +26,120 @@ namespace PoliceRecruitmentAPI.Core.Repository
 			_dbContext = dbContext;
 		}
 
-	
 
-		public async Task<IActionResult> Candidate(CandidateDto model)
-		{
-			using (var connection = _dbContext.CreateConnection())
-			{
-				
-				var parameter = SetCandidate(model);
-				try
-				{
-					var sqlConnection = (Microsoft.Data.SqlClient.SqlConnection)connection;
-					await sqlConnection.OpenAsync();
-					var queryResult = await connection.QueryMultipleAsync("Proc_Candidate", parameter, commandType: CommandType.StoredProcedure);
-					var Model = queryResult.Read<Object>().ToList();
-					var outcome = queryResult.ReadSingleOrDefault<Outcome>();
-					var outcomeId = outcome?.OutcomeId ?? 0;
-					var outcomeDetail = outcome?.OutcomeDetail ?? string.Empty;
-					var result = new Result
-					{
-						Outcome = outcome,
-						Data = Model,
-						UserId = model.UserId
 
-					};
+        //public async Task<IActionResult> Candidate(CandidateDto model)
+        //{
+        //	using (var connection = _dbContext.CreateConnection())
+        //	{
 
-                    if (outcomeId == 1)
+        //		var parameter = SetCandidate(model);
+        //		try
+        //		{
+        //			var sqlConnection = (Microsoft.Data.SqlClient.SqlConnection)connection;
+        //			await sqlConnection.OpenAsync();
+        //			var queryResult = await connection.QueryMultipleAsync("Proc_Candidate", parameter, commandType: CommandType.StoredProcedure);
+        //			var Model = queryResult.Read<Object>().ToList();
+        //			var outcome = queryResult.ReadSingleOrDefault<Outcome>();
+        //			var outcomeId = outcome?.OutcomeId ?? 0;
+        //			var outcomeDetail = outcome?.OutcomeDetail ?? string.Empty;
+        //			var result = new Result
+        //			{
+        //				Outcome = outcome,
+        //				Data = Model,
+        //				UserId = model.UserId
+
+        //			};
+
+        //                  if (outcomeId == 1)
+        //                  {
+        //                      return new ObjectResult(result)
+        //                      {
+        //                          StatusCode = 200
+        //                      };
+        //                  }
+        //                  else if (outcomeId == 2)
+        //                  {
+        //                      return new ObjectResult(result)
+        //                      {
+        //                          StatusCode = 409
+        //                      };
+        //                  }
+        //                  else if (outcomeId == 3)
+        //                  {
+        //                      return new ObjectResult(result)
+        //                      {
+        //                          StatusCode = 423
+        //                      };
+        //                  }
+        //                  else if (outcomeId == 4)
+        //                  {
+        //                      return new ObjectResult(result)
+        //                      {
+        //                          StatusCode = 407
+        //                      };
+        //                  }
+        //                  else
+        //                  {
+        //                      return new ObjectResult(result)
+        //                      {
+        //                          StatusCode = 400
+        //                      };
+        //                  }
+        //              }
+        //		catch (Exception)
+        //		{
+        //			throw;
+        //		}
+        //	}
+        //}
+
+        public async Task<IActionResult> Candidate(CandidateDto model)
+        {
+            using (var connection = _dbContext.CreateConnection())
+            {
+                var parameter = SetCandidate(model);
+                try
+                {
+                    var sqlConnection = (Microsoft.Data.SqlClient.SqlConnection)connection;
+                    await sqlConnection.OpenAsync();
+
+                    // ✅ Added timeout here
+                    var queryResult = await connection.QueryMultipleAsync(
+                        "Proc_Candidate",
+                        parameter,
+                        commandType: CommandType.StoredProcedure,
+                        commandTimeout: 300
+                    );
+
+                    var Model = queryResult.Read<Object>().ToList();
+                    var outcome = queryResult.ReadSingleOrDefault<Outcome>();
+                    var outcomeId = outcome?.OutcomeId ?? 0;
+                    var outcomeDetail = outcome?.OutcomeDetail ?? string.Empty;
+
+                    var result = new Result
                     {
-                        return new ObjectResult(result)
-                        {
-                            StatusCode = 200
-                        };
-                    }
-                    else if (outcomeId == 2)
+                        Outcome = outcome,
+                        Data = Model,
+                        UserId = model.UserId
+                    };
+
+                    return outcomeId switch
                     {
-                        return new ObjectResult(result)
-                        {
-                            StatusCode = 409
-                        };
-                    }
-                    else if (outcomeId == 3)
-                    {
-                        return new ObjectResult(result)
-                        {
-                            StatusCode = 423
-                        };
-                    }
-                    else if (outcomeId == 4)
-                    {
-                        return new ObjectResult(result)
-                        {
-                            StatusCode = 407
-                        };
-                    }
-                    else
-                    {
-                        return new ObjectResult(result)
-                        {
-                            StatusCode = 400
-                        };
-                    }
+                        1 => new ObjectResult(result) { StatusCode = 200 },
+                        2 => new ObjectResult(result) { StatusCode = 409 },
+                        3 => new ObjectResult(result) { StatusCode = 423 },
+                        4 => new ObjectResult(result) { StatusCode = 407 },
+                        _ => new ObjectResult(result) { StatusCode = 400 },
+                    };
                 }
-				catch (Exception)
-				{
-					throw;
-				}
-			}
-		}
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+        }
+
 
         public async Task<IActionResult> Candidate1(CandidateDto model)
         {
@@ -104,7 +151,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
                 {
                     var sqlConnection = (Microsoft.Data.SqlClient.SqlConnection)connection;
                     await sqlConnection.OpenAsync();
-                    var queryResult = await connection.QueryMultipleAsync("Proc_Candidate", parameter, commandType: CommandType.StoredProcedure);
+                    var queryResult = await connection.QueryMultipleAsync("Proc_Candidate", parameter, commandType: CommandType.StoredProcedure, commandTimeout: 300);
                     var Model = queryResult.Read<Object>().ToList();
                     var outcome = queryResult.ReadSingleOrDefault<Outcome>();
                     var outcomeId = outcome?.OutcomeId ?? 0;
@@ -164,7 +211,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
                     await sqlConnection.OpenAsync();
 
                     // Execute stored procedure and get multiple result sets
-                    var queryResult = await connection.QueryMultipleAsync("Proc_CandidateTestReport", parameter, commandType: CommandType.StoredProcedure);
+                    var queryResult = await connection.QueryMultipleAsync("Proc_CandidateTestReport", parameter, commandType: CommandType.StoredProcedure, commandTimeout: 300);
 
                     // Read the first result set (MeritList)
                     var meritList = queryResult.Read<Object>().ToList(); // This will contain the MeritList data
@@ -229,7 +276,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
 					await sqlConnection.OpenAsync();
 				
 
-					var queryResult = await connection.QueryMultipleAsync("Proc_Candidate", parameter, commandType: CommandType.StoredProcedure);
+					var queryResult = await connection.QueryMultipleAsync("Proc_Candidate", parameter, commandType: CommandType.StoredProcedure, commandTimeout: 300);
 					var Model = queryResult.ReadSingleOrDefault<Object>();
 					var outcome = queryResult.ReadSingleOrDefault<Outcome>();
 					var outcomeId = outcome?.OutcomeId ?? 0;

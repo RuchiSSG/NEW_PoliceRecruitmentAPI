@@ -27,7 +27,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
 					var sqlConnection = (Microsoft.Data.SqlClient.SqlConnection)connection;
 					await sqlConnection.OpenAsync();
 
-					var queryResult = await connection.QueryMultipleAsync("Proc_LoginDetails", parameter, commandType: CommandType.StoredProcedure);
+					var queryResult = await connection.QueryMultipleAsync("Proc_LoginDetails", parameter, commandType: CommandType.StoredProcedure, commandTimeout: 300);
 
                     var Model = queryResult.ReadSingleOrDefault<dynamic>();
                     var outcome = queryResult.ReadSingleOrDefault<Outcome>();
