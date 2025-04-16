@@ -109,7 +109,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
                         "Proc_Candidate",
                         parameter,
                         commandType: CommandType.StoredProcedure,
-                        commandTimeout: 300
+                        commandTimeout: 3000
                     );
 
                     var Model = queryResult.Read<Object>().ToList();
@@ -211,7 +211,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
                     await sqlConnection.OpenAsync();
 
                     // Execute stored procedure and get multiple result sets
-                    var queryResult = await connection.QueryMultipleAsync("Proc_CandidateTestReport", parameter, commandType: CommandType.StoredProcedure, commandTimeout: 300);
+                    var queryResult = await connection.QueryMultipleAsync("Proc_CandidateTestReport", parameter, commandType: CommandType.StoredProcedure, commandTimeout: 2000);
 
                     // Read the first result set (MeritList)
                     var meritList = queryResult.Read<Object>().ToList(); // This will contain the MeritList data
