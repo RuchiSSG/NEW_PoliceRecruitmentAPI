@@ -42,26 +42,22 @@ namespace PoliceRecruitmentAPI.Services.ApiServices
                     _connectionStatus = "Ethernet cable is not connected";
                     _ethernetConnected = false;
                     Console.WriteLine(_connectionStatus);
-
-
-
                     // Still create a listener on loopback address to avoid null reference
                     _tcpListener = new TcpListener(IPAddress.Loopback, port);
                 }
-                else
-                {
-                    _tcpListener = new TcpListener(IPAddress.Parse(ethernetIp), port);
-                    // Enable port reuse to prevent "Address already in use" error
-                    _tcpListener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                }
+
+                // Use IPAddress.Any instead of a specific IP
+                _tcpListener = new TcpListener(IPAddress.Any, port);
+                _tcpListener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             }
             catch (Exception ex)
             {
                 _connectionStatus = $"Connection error: {ex.Message}";
                 _ethernetConnected = false;
                 Console.WriteLine(_connectionStatus);
-                // Create a fallback listener to prevent null references
-                _tcpListener = new TcpListener(IPAddress.Loopback, port);
+
+                // Still fallback to IPAddress.Any
+                _tcpListener = new TcpListener(IPAddress.Any, port);
             }
         }
 
