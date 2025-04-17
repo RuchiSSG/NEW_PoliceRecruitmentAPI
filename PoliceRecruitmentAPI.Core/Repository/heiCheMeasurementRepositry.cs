@@ -141,8 +141,10 @@ namespace PoliceRecruitmentAPI.Core.Repository
             parameters.Add("@minvalue", user.@minvalue, DbType.String);
             parameters.Add("@recruitid", user.RecruitId, DbType.String);
             parameters.Add("@recConfId", user.recConfId, DbType.String);
-            parameters.Add("@isactive", user.isactive, DbType.String);
-			parameters.Add("@OutcomeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("@isactive", user.isactive, DbType.String); 
+            parameters.Add("@Signature", user.Signature, DbType.String);
+
+            parameters.Add("@OutcomeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 			parameters.Add("@OutcomeDetail", dbType: DbType.String, size: 4000, direction: ParameterDirection.Output);
 			return parameters;
 
