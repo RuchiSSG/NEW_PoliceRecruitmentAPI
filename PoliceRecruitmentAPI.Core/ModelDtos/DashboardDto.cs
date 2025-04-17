@@ -24,7 +24,11 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
 		public int? ForGround { get; set; }
 		public int? ForWriiten { get; set; }
 		public int? Pass { get; set; }
+        public int? DocumentPass { get; set; }
+        public int? DocumentFail { get; set; }
+        public int? Heichestpass { get; set; }
+        public int? HeichestFail { get; set; }
 
-       
-	}
+
+    }
 }

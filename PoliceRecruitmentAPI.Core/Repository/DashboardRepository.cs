@@ -80,7 +80,11 @@ namespace PoliceRecruitmentAPI.Core.Repository
 			parameters.Add("@AllCandidate", user.AllCandidate, DbType.Int64);
 			parameters.Add("@ForGround", user.ForGround, DbType.Int64);
 			parameters.Add("@Pass", user.Pass, DbType.Int64);
-			parameters.Add("@OutcomeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+            parameters.Add("@DocumentPass", user.DocumentPass, DbType.Int64);
+            parameters.Add("@DocumentFail", user.DocumentFail, DbType.Int64);
+            parameters.Add("@Heichestpass", user.Heichestpass, DbType.Int64);
+            parameters.Add("@HeichestFail", user.HeichestFail, DbType.Int64);
+            parameters.Add("@OutcomeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 			parameters.Add("@OutcomeDetail", dbType: DbType.String, size: 4000, direction: ParameterDirection.Output);
 			return parameters;
 
