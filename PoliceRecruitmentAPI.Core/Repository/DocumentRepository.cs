@@ -105,6 +105,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
 			parameters.Add("@CandidateId", user.CandidateId, DbType.String);
             parameters.Add("@CategoryName", user.CategoryName, DbType.String);
             parameters.Add("@RecruitId", user.RecruitId, DbType.String);
+            parameters.Add("@Signature", user.Signature, DbType.String);
             parameters.Add("@Documentsubmitlater", user.Documentsubmitlater, DbType.String);
             parameters.Add("@allowfromopen", user.allowfromopen, DbType.String);
             if (user.DataTable != null && user.DataTable.Rows.Count > 0)

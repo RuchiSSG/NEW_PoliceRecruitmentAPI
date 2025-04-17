@@ -77,6 +77,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
             parameters.Add("@CategoryName", user.CategoryName, DbType.String);
             parameters.Add("@IVImage", user.IVImage, DbType.String);
             parameters.Add("@Secretkeys", user.Secretkeys, DbType.String);
+            parameters.Add("@Signature", user.Signature, DbType.String);
             parameters.Add("@OutcomeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@OutcomeDetail", dbType: DbType.String, size: 4000, direction: ParameterDirection.Output);
             return parameters;
