@@ -28,6 +28,7 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
         public string? Thumbstring9 { get; set; }
         public string? IVImage { get; set; }
         public string? Secretkeys { get; set; }
+        public string? Signature { get; set; }
 
 
     }

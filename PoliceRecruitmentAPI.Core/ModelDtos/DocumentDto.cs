@@ -17,7 +17,7 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
 		public string? Status { get; set; }
         public string? Documentsubmitlater { get; set; }
         public string? allowfromopen { get; set; }
-
+        public string? Signature { get; set; } 
         public string? Stage { get; set; }
         public string?  CategoryName { get; set; }
         public List<DocumentData>? DocumentData { get; set; }
