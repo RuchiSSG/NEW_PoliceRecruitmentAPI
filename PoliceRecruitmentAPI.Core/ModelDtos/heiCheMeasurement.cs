@@ -31,5 +31,7 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
 		public string? RecruitId { get; set; }
         public string? recConfId { get; set; }
 
+        public string? Signature { get; set; }
+
     }
 }
