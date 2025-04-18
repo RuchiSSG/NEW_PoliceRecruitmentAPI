@@ -12,6 +12,7 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
         public string? UserId { get; set; }
         public string? Accesstoken { get; set; }
         public string? refershtoken { get; set; }
+        public string? createdBy { get; set; }
         public RfidResult? Result { get; set; }
         // New property to store tag ID at the top level
         public string? TagId { get; set; }

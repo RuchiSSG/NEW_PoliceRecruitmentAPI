@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PoliceRecruitmentAPI.Core.Repository
 {
-    internal class RfidRepository
+    public  class RfidRepository
     {
     }
 }
