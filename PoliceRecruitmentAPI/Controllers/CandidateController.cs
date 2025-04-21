@@ -179,26 +179,26 @@ namespace PoliceRecruitmentAPI.Controllers
         }
 
 
-        [HttpGet("Candidatefilterdata")]
-        public async Task<IActionResult> Canddattefilterdata([FromQuery] CandidateDto model)
-        {
-            try
-            {
-                if (model.BaseModel == null)
-                {
-                    model.BaseModel = new BaseModel();
-                }
-                model.BaseModel.OperationType = "GetCandidatesCompleted";
+        //[HttpGet("Candidatefilterdata")]
+        //public async Task<IActionResult> Canddattefilterdata([FromQuery] CandidateDto model)
+        //{
+        //    try
+        //    {
+        //        if (model.BaseModel == null)
+        //        {
+        //            model.BaseModel = new BaseModel();
+        //        }
+        //        model.BaseModel.OperationType = "GetCandidatesCompleted";
 
-                dynamic userDetail = await _candidateService.Candidate(model);
-                return userDetail;
+        //        dynamic userDetail = await _candidateService.Candidate(model);
+        //        return userDetail;
 
-            }
-            catch (Exception ex)
-            {
-                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+        //    }
+        //}
 
 
         [HttpGet("GetAllValue")]
