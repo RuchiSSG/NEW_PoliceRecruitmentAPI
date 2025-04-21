@@ -14,6 +14,7 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
 		public BaseModel? BaseModel { get; set; }
 		public long? CandidateID { get; set; }
     	public string? UserId { get; set;}
+    	public string? Status { get; set;}
     	public string? RecruitmentYear { get; set;}
 		public string? OfficeName { get; set; }
 		public string? PostName { get; set; }//port

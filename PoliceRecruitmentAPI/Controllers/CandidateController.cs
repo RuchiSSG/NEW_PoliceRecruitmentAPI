@@ -14,6 +14,7 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace PoliceRecruitmentAPI.Controllers
 {
@@ -177,6 +178,27 @@ namespace PoliceRecruitmentAPI.Controllers
             }
         }
 
+
+        [HttpGet("Canddattefilterdata")]
+        public async Task<IActionResult> Canddattefilterdata([FromQuery] CandidateDto model)
+        {
+            try
+            {
+                if (model.BaseModel == null)
+                {
+                    model.BaseModel = new BaseModel();
+                }
+                model.BaseModel.OperationType = "GetCandidatesCompleted";
+
+                dynamic userDetail = await _candidateService.Candidate(model);
+                return userDetail;
+
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+        }
 
 
         [HttpGet("GetAllValue")]

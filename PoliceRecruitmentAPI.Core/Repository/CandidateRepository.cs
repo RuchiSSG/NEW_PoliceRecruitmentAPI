@@ -351,6 +351,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
 			parameters.Add("@PermanentPinCode", user.PermanentPinCode, DbType.String);
 			parameters.Add("@Nationality", user.Nationality, DbType.String);
 			parameters.Add("@Religion", user.Religion, DbType.String);
+			parameters.Add("@Status", user.Status, DbType.String);
 			parameters.Add("@Cast", user.Cast, DbType.String);
 			parameters.Add("@SubCast", user.SubCast, DbType.String);
 			parameters.Add("@Cast", user.Cast, DbType.String);
