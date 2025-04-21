@@ -240,6 +240,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
             parameters.Add("@RFID", user.RFID, DbType.String);
             parameters.Add("@CreatedDate", user.CreatedDate, DbType.DateTime);
             parameters.Add("@ChestNo", user.ChestNo, DbType.String);
+            parameters.Add("@CandidateID", user.CandidateID, DbType.String);
             parameters.Add("@eventId", user.eventId, DbType.String);
             parameters.Add("@Position", user.Position, DbType.String);
             parameters.Add("@DeviceName", user.DeviceName, DbType.String);
