@@ -179,7 +179,7 @@ namespace PoliceRecruitmentAPI.Controllers
         }
 
 
-        [HttpGet("Canddattefilterdata")]
+        [HttpGet("Candidatefilterdata")]
         public async Task<IActionResult> Canddattefilterdata([FromQuery] CandidateDto model)
         {
             try

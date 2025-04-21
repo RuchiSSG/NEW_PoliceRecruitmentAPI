@@ -49,6 +49,31 @@ namespace PoliceRecruitmentAPI.Controllers
                 return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }
+
+
+        [HttpGet("GetMapCandidate")]
+        public async Task<IActionResult> GetMapCandidate([FromQuery] RFIDChestNoMappingDto model)
+        {
+            try
+            {
+
+                if (model.BaseModel == null)
+                {
+                    model.BaseModel = new BaseModel();
+                }
+                model.BaseModel.OperationType = "GetMappCandidate";
+
+                dynamic userDetail = await _candidateService.RFIDChestNoMapping(model);
+
+                return userDetail;
+
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+        }
+
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert([FromBody] RFIDChestNoMappingDto user)
         {
