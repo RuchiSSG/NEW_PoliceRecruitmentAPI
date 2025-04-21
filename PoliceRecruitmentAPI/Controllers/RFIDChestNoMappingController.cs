@@ -98,6 +98,27 @@ namespace PoliceRecruitmentAPI.Controllers
             }
         }
 
+        //[HttpPost("Insert")]
+        //public async Task<IActionResult> Insert([FromBody] RFIDChestNoMappingDto user)
+        //{
+        //    try
+        //    {
+        //        if (user.BaseModel == null)
+        //        {
+        //            user.BaseModel = new BaseModel();
+        //        }
+        //        user.BaseModel.OperationType = "Insert";
+        //        user.CreatedDate= DateTime.Now;
+        //        var result = await _candidateService.Get(user);
+        //        return result;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+
+        //}
+
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert([FromBody] RFIDChestNoMappingDto user)
         {
@@ -107,10 +128,18 @@ namespace PoliceRecruitmentAPI.Controllers
                 {
                     user.BaseModel = new BaseModel();
                 }
-                user.BaseModel.OperationType = "Insert";
+
+                if (user.Id == null)
+                {
+                    user.BaseModel.OperationType = "Insert";
+                }
+                else
+                {
+                    user.BaseModel.OperationType = "updateRFID";
+                }
                 user.CreatedDate= DateTime.Now;
-                var result = await _candidateService.Get(user);
-                return result;
+                var createduser = await _candidateService.Get(user);
+                return createduser;
             }
             catch (Exception ex)
             {
