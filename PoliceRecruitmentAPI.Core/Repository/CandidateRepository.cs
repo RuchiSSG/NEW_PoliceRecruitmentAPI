@@ -214,7 +214,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
                     var queryResult = await connection.QueryMultipleAsync("Proc_CandidateTestReport", parameter, commandType: CommandType.StoredProcedure, commandTimeout: 2000);
 
                     // Read the first result set (MeritList)
-                    var meritList = queryResult.Read<Object>().ToList(); // This will contain the MeritList data
+                    var meritList = queryResult.Read<Object>().ToList(); //  This will contain the MeritList data
 
                     // Read the second result set (CastWisedata)
                     var castWiseData = queryResult.Read<Object>().ToList(); // This will contain the CastWisedata
