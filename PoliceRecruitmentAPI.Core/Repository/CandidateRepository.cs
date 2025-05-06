@@ -232,7 +232,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
                         Outcome = outcome,
                         Data = new object[] // Data is now an array
                 {
-                    new { meritList = meritList, castWisedata = castWiseData  }, // Add meritList as an item in the array
+                    new { meritList = meritList, castWisedata = castWiseData  }, //  Add meritList as an item in the array
                     ////new { castWisedata = castWiseData } // A dd castWisedata as an item in the array
                 },
                         UserId = model.UserId
