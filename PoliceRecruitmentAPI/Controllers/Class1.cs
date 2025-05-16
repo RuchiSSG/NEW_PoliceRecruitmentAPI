@@ -49,7 +49,7 @@ namespace common
     {
         private TokenRepo? _loginRepo;
         private DatabaseContext? _context;
-
+        private readonly ILogger<ExampleFilterAttribute> _logger;
         private IConfiguration? con;
 
         //public ExampleFilterAttribute(IConfiguration configuration)
@@ -126,7 +126,6 @@ namespace common
                                 string?  IpAddressd =data.IpAddress ?? data1.IpAddress;
                                 SessionId = sessionIdd;
                                 IpAddress = IpAddressd;
-
                             }
                             var OperationType = "UpdateToken";
                             //string? connectionstring = data1.BaseModel.Server_Value;
@@ -151,7 +150,6 @@ namespace common
                             {
                                 outcome = new Outcome
                                 {
-
                                     OutcomeId = data.Outcome.OutcomeId,
                                     OutcomeDetail = data.Outcome.OutcomeDetail,
                                     Tokens = encrypttext,
@@ -176,9 +174,36 @@ namespace common
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = data?.Data?.BaseModel?.OperationType ?? "OnActionExecuted"
+                };
+
+                _logger.LogError(ex,
+                    "{SeparatorLine}\n" +
+                    "Error ID: {ErrorId}\t" +
+                    "DateTime: {FormattedTimestamp}\n" +
+                    "Error Message: {Message}\n" +
+                    "Stack Trace: {StackTrace}\n" +
+                    "{SeparatorLine}",
+                    LogErrorResponse.SEPARATOR_LINE,
+                    errorResponse.ErrorId,
+                    errorResponse.FormattedTimestamp,
+                    errorResponse.Message,
+                    errorResponse.StackTrace,
+                    LogErrorResponse.SEPARATOR_LINE
+                );
+
+                context.Result = new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
 
 
@@ -369,8 +394,38 @@ namespace common
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.ToString());
+                var loggerFactory = context.HttpContext.RequestServices.GetService<ILoggerFactory>();
+                var logger = loggerFactory.CreateLogger<ExampleFilterAttribute>();
 
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = context.ActionDescriptor.DisplayName ?? "Unknown"
+                };
+
+                logger.LogError(ex,
+                    "{SeparatorLine}\n" +
+                    "Error ID: {ErrorId}\t" +
+                    "DateTime: {FormattedTimestamp}\n" +
+                    "Error Message: {Message}\n" +
+                    "Stack Trace: {StackTrace}\n" +
+                    "{SeparatorLine}",
+                    LogErrorResponse.SEPARATOR_LINE,
+                    errorResponse.ErrorId,
+                    errorResponse.FormattedTimestamp,
+                    errorResponse.Message,
+                    errorResponse.StackTrace,
+                    LogErrorResponse.SEPARATOR_LINE
+                );
+
+                // Return error response instead of throwing
+                context.Result = new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
 
 

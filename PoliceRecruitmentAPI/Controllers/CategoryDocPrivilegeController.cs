@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PoliceRecruitmentAPI.Core.ModelDtos;
 using PoliceRecruitmentAPI.Services.Interfaces;
 using System.Data;
+using System.Globalization;
 
 namespace PoliceRecruitmentAPI.Controllers
 {
@@ -36,9 +37,32 @@ namespace PoliceRecruitmentAPI.Controllers
                 var createduser = await _categorymaster.Category(user);
                 return createduser;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp =DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+                // Return structured error response
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -57,9 +81,33 @@ namespace PoliceRecruitmentAPI.Controllers
                 var createduser = await _categorymaster.Category(user);
                 return createduser;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp =DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                // Return structured error response
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -79,9 +127,32 @@ namespace PoliceRecruitmentAPI.Controllers
                 var createduser = await _categorymaster.Category(user);
                 return createduser;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp =DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+                // Return structured error response
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -103,9 +174,33 @@ namespace PoliceRecruitmentAPI.Controllers
                 var createduser = await _categorymaster.Category(user);
                 return createduser;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp =DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                // Return structured error response
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -139,12 +234,12 @@ namespace PoliceRecruitmentAPI.Controllers
                 dataTable.Columns.Add("viewaccess", typeof(string));
                 dataTable.Columns.Add("workflow", typeof(string));
                 dataTable.Columns.Add("DocumentValidateDate", typeof(DateTime));
-                //if (user.Id != null && user.Privilage == null)
-                //{
-                //    user.BaseModel.OperationType = "UpdateStatus";
-                //}
-                //else
-                //{
+                if (user.Id != null && user.Privilage == null)
+                {
+                    user.BaseModel.OperationType = "UpdateStatus";
+                }
+                else
+                {
                     foreach (var privilage in user.Privilage)
                     {
                         dataTable.Rows.Add(
@@ -161,27 +256,81 @@ namespace PoliceRecruitmentAPI.Controllers
                     }
                     // user.Privilage = null;
                     user.DataTable = dataTable;
-                //}
+                }
                 var createduser = await _categorymaster.Get(user);
                 return createduser;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp =DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                // Return structured error response
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
         [HttpPost("DeleteCategory")]
         public async Task<IActionResult> DeleteDuty([FromBody] CategoryPrirvilegeDto user)
         {
-            if (user.BaseModel == null)
+            try
             {
-                user.BaseModel = new BaseModel();
-            }
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
 
-            user.BaseModel.OperationType = "Delete";
-            var productDetails = await _categorymaster.Get(user);
-            return productDetails;
+                user.BaseModel.OperationType = "Delete";
+                var productDetails = await _categorymaster.Get(user);
+                return productDetails;
+            }
+            catch (Exception ex)
+            {
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp =DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+                // Return structured error response
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ using PoliceRecruitmentAPI.Core.ModelDtos;
 using PoliceRecruitmentAPI.Core.Repository;
 using PoliceRecruitmentAPI.Services.Interfaces;
 using System.Data;
+using System.Globalization;
 
 namespace PoliceRecruitmentAPI.Controllers
 {
@@ -38,11 +39,34 @@ namespace PoliceRecruitmentAPI.Controllers
 				var createduser = await _rolemaster.Role(user);
 				return createduser;
 			}
-			catch (Exception)
-			{
-				throw;
-			}
-		}
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
 
 		[HttpGet("GetAllDuty")]
 		public async Task<IActionResult> GetAllDuty([FromQuery] RoleMasterDto user)
@@ -59,11 +83,34 @@ namespace PoliceRecruitmentAPI.Controllers
 				var createduser = await _rolemaster.Role(user);
 				return createduser;
 			}
-			catch (Exception)
-			{
-				throw;
-			}
-		}
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
 		[HttpGet("GetMenu")]
 		public async Task<IActionResult> Getmenu([FromQuery] RoleMasterDto user)
 		{
@@ -80,11 +127,34 @@ namespace PoliceRecruitmentAPI.Controllers
 				var createduser = await _rolemaster.Role(user);
 				return createduser;
 			}
-			catch (Exception)
-			{
-				throw;
-			}
-		}
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
 
         [HttpGet("GetRoleById")]
         public async Task<IActionResult> GetRoleById([FromQuery] RoleMasterDto user)
@@ -101,9 +171,32 @@ namespace PoliceRecruitmentAPI.Controllers
                 var createduser = await _rolemaster.Role(user);
                 return createduser;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
             }
         }
 
@@ -158,23 +251,76 @@ namespace PoliceRecruitmentAPI.Controllers
 				var createduser = await _rolemaster.Get(user);
 				return createduser;
 			}
-			catch (Exception)
-			{
-				throw;
-			}
-		}
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
 
 		[HttpPost("DeleteRole")]
 		public async Task<IActionResult> DeleteRole([FromBody] RoleMasterDto user)
 		{
-			if (user.BaseModel == null)
-			{
-				user.BaseModel = new BaseModel();
-			}
+            try
+            {
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
 
-			user.BaseModel.OperationType = "Delete";
-			var productDetails = await _rolemaster.Get(user);
-			return productDetails;
-		}
+                user.BaseModel.OperationType = "Delete";
+                var productDetails = await _rolemaster.Get(user);
+                return productDetails;
+            }
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
 	}
 }
