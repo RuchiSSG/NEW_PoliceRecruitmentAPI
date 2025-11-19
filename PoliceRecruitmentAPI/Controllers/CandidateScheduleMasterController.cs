@@ -214,6 +214,29 @@ namespace PoliceRecruitmentAPI.Controllers
             }
         }
 
+        [HttpGet("CandidateScheduleInsert")]
+        public async Task<IActionResult> CandidateScheduleInsert([FromQuery] CandidateScheduleMasterDto model)
+        {
+            try
+            {
+
+                if (model.BaseModel == null)
+                {
+                    model.BaseModel = new BaseModel();
+                }
+                model.BaseModel.OperationType = "CandidateScheduleInsert";
+
+                dynamic userDetail = await _candidateService.CandidateSchedule(model);
+
+                return userDetail;
+
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+        }
+
         [HttpPost("UpdateScheduleCandidate")]
         public async Task<IActionResult> UpdateScheduleCandidate([FromBody] CandidateScheduleMasterDto model)
         {
