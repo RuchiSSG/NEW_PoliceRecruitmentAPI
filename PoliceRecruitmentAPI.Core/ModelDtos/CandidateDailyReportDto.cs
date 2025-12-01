@@ -17,6 +17,9 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
         public string? Eventid { get; set; }
         public string?  Groupid { get; set; }
         public DateTime? SelectedDate { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+
 
     }
 }

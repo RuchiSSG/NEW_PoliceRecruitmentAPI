@@ -138,6 +138,8 @@ namespace PoliceRecruitmentAPI.Core.Repository
             parameters.Add("@documentdata", user.documentdata, DbType.String);
             parameters.Add("@heichestdata", user.heichestdata, DbType.String);
             parameters.Add("@SelectedDate", user.SelectedDate, DbType.Date);
+            parameters.Add("@SelectedDate", user.FromDate, DbType.Date);
+            parameters.Add("@SelectedDate", user.ToDate, DbType.Date);
             parameters.Add("@Eventid", user.Eventid, DbType.String);
             parameters.Add("@groupid", user.Groupid, DbType.String);
             parameters.Add("@AllData", user.All, DbType.String);
