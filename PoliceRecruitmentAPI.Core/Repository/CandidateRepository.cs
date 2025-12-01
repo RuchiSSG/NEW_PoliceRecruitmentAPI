@@ -365,6 +365,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
 			parameters.Add("@Ancestral", user.Ancestral, DbType.Boolean);
 			parameters.Add("@groupid", user.groupid, DbType.Int64);
             parameters.Add("@Categoryname", user.Category, DbType.String);
+            parameters.Add("@CategoryId", user.CategoryId, DbType.String);
             parameters.Add("@EventId", user.EventId, DbType.String);
             parameters.Add("@Id", user.Id, DbType.String);
             parameters.Add("@CastId", user.CastId, DbType.String);
