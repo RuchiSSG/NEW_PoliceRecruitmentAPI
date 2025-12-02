@@ -30,7 +30,7 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
 		public string ? minvalue { get; set; }
 		public string? RecruitId { get; set; }
         public string? recConfId { get; set; }
-
+        public string? Category { get; set; }
         public string? Signature { get; set; }
 
     }
