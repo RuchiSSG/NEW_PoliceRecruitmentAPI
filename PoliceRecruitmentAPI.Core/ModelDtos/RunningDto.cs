@@ -44,6 +44,7 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
 		public string? Score { get; set; }
 		public DateTime? Date { get; set; }
         public string? Eventid { get; set; }
+        public string? AddGrpLdrName { get; set; }
         public string? GrpLdrName { get; set; }
         public string? GrpLdrSignature { get; set; }
         public string? InchargeSignature { get; set; }

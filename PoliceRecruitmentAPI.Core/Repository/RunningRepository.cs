@@ -249,7 +249,9 @@ namespace PoliceRecruitmentAPI.Core.Repository
 			parameters.Add("@NoOfAttemt", user.NoOfAttemt, DbType.String);
 			parameters.Add("@Signature", user.Signature, DbType.String);
 			parameters.Add("@Eventid", user.Eventid, DbType.String);
-			parameters.Add("@GrpLdrSignature", user.GrpLdrSignature, DbType.String);
+            parameters.Add("@GrpLdrName", user.GrpLdrName, DbType.String);
+            parameters.Add("@AddGrpLdrName", user.AddGrpLdrName, DbType.String);
+            parameters.Add("@GrpLdrSignature", user.GrpLdrSignature, DbType.String);
 			parameters.Add("@InchargeSignature", user.InchargeSignature, DbType.String);
 			parameters.Add("@RecruitId", user.RecruitId, DbType.String);
 			if (user.DataTable != null && user.DataTable.Rows.Count > 0)
