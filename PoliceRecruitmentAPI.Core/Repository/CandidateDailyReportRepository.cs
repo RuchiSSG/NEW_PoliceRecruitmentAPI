@@ -142,6 +142,8 @@ namespace PoliceRecruitmentAPI.Core.Repository
             parameters.Add("@ToDate", user.ToDate, DbType.Date);
             parameters.Add("@Eventid", user.Eventid, DbType.String);
             parameters.Add("@groupid", user.Groupid, DbType.String);
+            parameters.Add("@ParallelReservation", user.ParallelReservation, DbType.String);
+            parameters.Add("@Cast", user.Cast, DbType.String);
             parameters.Add("@AllData", user.All, DbType.String);
             parameters.Add("@OutcomeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@OutcomeDetail", dbType: DbType.String, size: 4000, direction: ParameterDirection.Output);
