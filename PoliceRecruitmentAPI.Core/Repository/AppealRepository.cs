@@ -120,6 +120,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
             parameters.Add("@Status", user.Status, DbType.String);
             parameters.Add("@RecruitId", user.RecruitId, DbType.String);
             parameters.Add("@Stage", user.Stage, DbType.String);
+            parameters.Add("@EventId", user.EventId, DbType.String);
             parameters.Add("@OutcomeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 			parameters.Add("@OutcomeDetail", dbType: DbType.String, size: 4000, direction: ParameterDirection.Output);
 			return parameters;
