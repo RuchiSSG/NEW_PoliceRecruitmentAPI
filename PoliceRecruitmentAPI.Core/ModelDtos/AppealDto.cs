@@ -17,8 +17,9 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
         public string? Status { get; set; }
         public string? RecruitId { get; set; }
 		public string? Cast { get; set; }
-		public string ? Stage { get; set; }
         public string? EventId { get; set; }
+        public string ? Stage { get; set; }
+       
 
 
     }
