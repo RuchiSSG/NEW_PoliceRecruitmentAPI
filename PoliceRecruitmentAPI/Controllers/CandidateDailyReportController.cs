@@ -76,6 +76,51 @@ using System.Text;
             }
         }
 
+        [HttpGet("GetCasts")]
+        public async Task<IActionResult> GetCasts([FromQuery] CandidateDailyReportDto model)
+        {
+            try
+            {
+
+                if (model.BaseModel == null)
+                {
+                    model.BaseModel = new BaseModel();
+                }
+                model.BaseModel.OperationType = "GetCasts";
+
+                dynamic userDetail = await _candidateService.Candidate(model);
+                return userDetail;
+
+            }
+            catch (Exception ex)
+            {
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                // Return structured error response
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
         [HttpGet("Get100meterAll")]
         public async Task<IActionResult> Get100meterAll([FromQuery] CandidateDailyReportDto model)
         {
