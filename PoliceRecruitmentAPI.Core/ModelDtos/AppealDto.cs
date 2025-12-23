@@ -12,7 +12,8 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
 		public long? CandidateID { get; set; }
 		public string? UserId { get; set; }
 		public string? ApprovedBy { get; set; }
-		public DateTime? Date { get; set; }
+        public string? AppliedBy { get; set; }
+        public DateTime? Date { get; set; }
 		public string? Remark { get; set; }
         public string? Status { get; set; }
         public string? RecruitId { get; set; }
