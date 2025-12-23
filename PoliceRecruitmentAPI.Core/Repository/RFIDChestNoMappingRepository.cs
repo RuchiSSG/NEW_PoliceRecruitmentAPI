@@ -245,6 +245,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
             parameters.Add("@Position", user.Position, DbType.String);
             parameters.Add("@DeviceName", user.DeviceName, DbType.String);
             parameters.Add("@RecruitId", user.RecruitId, DbType.String);
+            parameters.Add("@Barcode", user.Barcode, DbType.String);
             parameters.Add("@currentDateTime", user.currentDateTime, DbType.String);
             if (user.DataTable != null && user.DataTable.Rows.Count > 0)
             {

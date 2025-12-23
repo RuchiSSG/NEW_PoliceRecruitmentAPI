@@ -205,5 +205,51 @@ namespace PoliceRecruitmentAPI.Controllers
             }
 
         }
-	}
+       
+        [HttpPost("InsertApply")]
+        public async Task<IActionResult> InsertApply([FromBody] AppealDto user)
+        {
+            try
+            {
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "InsertApply";
+                var result = await _candidateService.Get(user);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = user?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+
+                // Return structured error response
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+
+        }
+    }
+
 }

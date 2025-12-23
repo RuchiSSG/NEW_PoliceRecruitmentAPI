@@ -20,7 +20,8 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
 		public string? Position { get; set; }
 		public string? DeviceName { get; set; }
 		public string? RecruitId { get; set; }
-		public string? currentDateTime { get; set; }
+        public string? Barcode { get; set; }
+        public string? currentDateTime { get; set; }
         public DataTable? DataTable { get; set; }
         public string?  sessionid { get; set; }
         public string? ipaddress { get; set; }
