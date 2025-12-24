@@ -246,7 +246,14 @@ namespace PoliceRecruitmentAPI.Core.Repository
             parameters.Add("@DeviceName", user.DeviceName, DbType.String);
             parameters.Add("@RecruitId", user.RecruitId, DbType.String);
             parameters.Add("@Barcode", user.Barcode, DbType.String);
+            parameters.Add("@LapCount", user.LapCount, DbType.String);
             parameters.Add("@currentDateTime", user.currentDateTime, DbType.String);
+            // Add the DataTable as TVP
+            if (user.DataTable1 != null && user.DataTable1.Rows.Count > 0)
+            {
+                parameters.Add("@LapHistoryData",
+                    user.DataTable1.AsTableValuedParameter("[dbo].[RFIDRunningLogLapHistoryType]"));
+            }
             if (user.DataTable != null && user.DataTable.Rows.Count > 0)
             {
                 parameters.Add("@tbl_RFIDUploadType", user.DataTable.AsTableValuedParameter("[dbo].[tbl_RFIDUploadType]"));
