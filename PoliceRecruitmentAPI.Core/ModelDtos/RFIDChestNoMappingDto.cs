@@ -17,6 +17,7 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
         public string? CandidateID { get; set; }
         public DateTime? CreatedDate { get; set; }
 		public string? eventId { get; set; }
+		public string? eventName { get; set; }
 		public string? Position { get; set; }
 		public string? DeviceName { get; set; }
 		public string? RecruitId { get; set; }

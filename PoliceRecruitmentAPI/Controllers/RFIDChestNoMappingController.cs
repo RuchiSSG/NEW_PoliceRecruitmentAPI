@@ -211,6 +211,7 @@ namespace PoliceRecruitmentAPI.Controllers
 [FromQuery] string deviceid,
 [FromQuery] string Location,
 [FromQuery] string eventName,
+[FromQuery] string eventId,
 [FromBody] List<RFIDRunningLogItem> rfidData,
 [FromQuery] string sessionid,
 [FromQuery] string ipaddress)
@@ -251,7 +252,7 @@ namespace PoliceRecruitmentAPI.Controllers
                     {
                         lapHistory.Rows.Add(
                             item.RFIDdtagata,
-                            eventName,
+                            eventId,
                             userid,
                             DateTime.Now,
                             "1",
@@ -280,7 +281,8 @@ namespace PoliceRecruitmentAPI.Controllers
                     RecruitId = recruitid,
                     DeviceName = deviceid,
                     Position = Location,
-                    eventId = eventName,
+                    eventName = eventName,
+                    eventId = eventId,
                     CreatedDate = DateTime.Now,
                     DataTable1 = lapHistory,     // ONLY THIS NOW
                     BaseModel = new BaseModel { OperationType = "RFIDRunningLog" },

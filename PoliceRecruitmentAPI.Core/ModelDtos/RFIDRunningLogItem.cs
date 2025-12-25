@@ -18,6 +18,6 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
         public List<string>? AllLaps { get; set; }
         public string? EventName { get; set; }
        // public string RFIDdtagata { get; set; }
-        public string Timestamp { get; set; }
+        public string? Timestamp { get; set; }
     }
 }
