@@ -165,7 +165,7 @@ namespace PoliceRecruitmentAPI.Controllers
 
         }
         [HttpPost("RIFDRunningDelete")]
-        public async Task<IActionResult> RIFDRunningDelete([FromQuery] string userid, [FromQuery] string recruitid, [FromQuery] string deviceid, [FromQuery] string Location, [FromQuery] string eventName, [FromQuery] string sessionid, [FromQuery] string ipaddress)
+        public async Task<IActionResult> RIFDRunningDelete([FromQuery] string userid, [FromQuery] string recruitid, [FromQuery] string deviceid, [FromQuery] string Location, [FromQuery] string eventName, [FromQuery] string eventId, [FromQuery] string sessionid, [FromQuery] string ipaddress)
         {
             try
             {
@@ -174,7 +174,8 @@ namespace PoliceRecruitmentAPI.Controllers
                 user.RecruitId = recruitid;
                 user.DeviceName = deviceid;
                 user.Position = Location;
-                user.eventId = eventName;
+                user.eventName = eventName;
+                user.eventId = eventId;
                 user.sessionid=sessionid;
                 user.ipaddress=ipaddress;
                 if (user.BaseModel == null)
