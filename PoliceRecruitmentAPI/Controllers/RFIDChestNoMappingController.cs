@@ -243,9 +243,9 @@ namespace PoliceRecruitmentAPI.Controllers
 
                     if (!string.IsNullOrEmpty(item.Lap1)) laps.Add(item.Lap1);
                     if (!string.IsNullOrEmpty(item.Lap2)) laps.Add(item.Lap2);
-                    if (!string.IsNullOrEmpty(item.Lap3)) laps.Add(item.Lap3);
-                    if (!string.IsNullOrEmpty(item.Lap4)) laps.Add(item.Lap4);
-                    if (!string.IsNullOrEmpty(item.Lap5)) laps.Add(item.Lap5);
+                    //if (!string.IsNullOrEmpty(item.Lap3)) laps.Add(item.Lap3);
+                    //if (!string.IsNullOrEmpty(item.Lap4)) laps.Add(item.Lap4);
+                    //if (!string.IsNullOrEmpty(item.Lap5)) laps.Add(item.Lap5);
 
                     int lapNo = 1;
 
@@ -336,91 +336,74 @@ namespace PoliceRecruitmentAPI.Controllers
         //    }
         //}
         [HttpPost("RFIDupload")]
-        public async Task<IActionResult> UploadExcel(IFormFile file, [FromForm] string userId, [FromForm] string RecruitId)
+        public async Task<IActionResult> UploadExcel(IFormFile file, [FromForm] string userId,[FromForm] string RecruitId)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            RFIDChestNoMappingDto user = new RFIDChestNoMappingDto { BaseModel = new BaseModel { OperationType = "RFIDupload" } };
-            user.UserId = userId;
-            user.RecruitId = RecruitId;
-            user.CreatedDate = DateTime.Now;
+
+            RFIDChestNoMappingDto user = new RFIDChestNoMappingDto
+            {
+                BaseModel = new BaseModel { OperationType = "RFIDupload" },
+                UserId = userId,
+                RecruitId = RecruitId,
+                CreatedDate = DateTime.Now
+            };
+
             if (file == null || file.Length == 0)
             {
                 return Ok(new Outcome { OutcomeId = 0, OutcomeDetail = "No data in the excel!" });
             }
 
             string[] allowedFileExtensions = { ".xls", ".xlsx", ".xlsm", ".csv" };
-            if (!allowedFileExtensions.Contains(Path.GetExtension(file.FileName)))
+            if (!allowedFileExtensions.Contains(Path.GetExtension(file.FileName).ToLower()))
             {
-                ModelState.AddModelError("File", "Please upload a file of type: " + string.Join(", ", allowedFileExtensions));
-                return BadRequest(ModelState);
+                return BadRequest("Invalid file type");
             }
 
+            // FORCE schema to match SQL TVP
             DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("RFID", typeof(string));
+            dataTable.Columns.Add("ChestNo", typeof(string));
+            dataTable.Columns.Add("Barcode", typeof(string));
 
             using (var stream = new MemoryStream())
             {
                 await file.CopyToAsync(stream);
                 stream.Position = 0;
 
-                MemoryStream convertedStream = new MemoryStream();
-                if (Path.GetExtension(file.FileName).Equals(".csv", StringComparison.OrdinalIgnoreCase))
-                {
-                    FileConverter.ConvertCsvToXlsx(stream, convertedStream);
-                }
-                else if (Path.GetExtension(file.FileName).Equals(".xls", StringComparison.OrdinalIgnoreCase))
-                {
-                    FileConverter.ConvertXlsToXlsx(stream, convertedStream);
-                }
-
-                MemoryStream newStream = convertedStream.Length > 0 ? convertedStream : stream;
-                newStream.Position = 0;
-
-                using (var package = new ExcelPackage(newStream))
+                using (var package = new ExcelPackage(stream))
                 {
                     var worksheet = package.Workbook.Worksheets[0];
+
+                    if (worksheet.Dimension == null)
+                    {
+                        return Ok(new Outcome { OutcomeId = 0, OutcomeDetail = "Excel sheet empty" });
+                    }
+
                     int rowCount = worksheet.Dimension.Rows;
-                    int colCount = worksheet.Dimension.Columns;
 
-                    if (rowCount == 1)
-                    {
-                        return Ok(new Outcome { OutcomeId = 0, OutcomeDetail = "No data in the excel!" });
-                    }
-
-                    // Adding columns to DataTable based on Excel header row (first row)
-                    for (int col = 1; col <= colCount; col++)
-                    {
-                        string columnName = worksheet.Cells[1, col].Value?.ToString();
-                        if (!string.IsNullOrEmpty(columnName))
-                        {
-                            dataTable.Columns.Add(new DataColumn(columnName, typeof(string)));
-                        }
-                    }
-
-                    // Adding rows to DataTable from Excel data
                     for (int row = 2; row <= rowCount; row++)
                     {
-                        var dataRow = dataTable.NewRow();
-                        for (int col = 1; col <= colCount; col++)
-                        {
-                            //var cellValue = worksheet.Cells[row, col].Value?.ToString();
-                            var cellValue = worksheet.Cells[row, col]?.Value.ToString();
-                            if (DateTime.TryParse(cellValue, out DateTime parsedDate))
-                            {
-                                dataRow[col - 1] = parsedDate.ToString("yyyy-MM-dd");
-                            }
-                            else
-                            {
-                                dataRow[col - 1] = cellValue?.ToString();
-                            }
-                        }
-                        dataTable.Rows.Add(dataRow);
+                        var dr = dataTable.NewRow();
+
+                        dr["RFID"]    = worksheet.Cells[row, 1]?.Text?.Trim();
+                        dr["ChestNo"] = worksheet.Cells[row, 2]?.Text?.Trim();
+                        dr["Barcode"] = worksheet.Cells[row, 3]?.Text?.Trim();
+
+                        dataTable.Rows.Add(dr);
                     }
                 }
             }
 
             user.DataTable = dataTable;
-            var parameter = await _candidateService.RFIDChestNoMapping(user);
-            return parameter;
+
+
+            // 🔍 Debug safety
+            if (user.DataTable.Rows.Count == 0)
+            {
+                return Ok(new Outcome { OutcomeId = 0, OutcomeDetail = "No valid rows found in Excel" });
+            }
+
+            return await _candidateService.RFIDChestNoMapping(user);
         }
 
         public static class FileConverter
