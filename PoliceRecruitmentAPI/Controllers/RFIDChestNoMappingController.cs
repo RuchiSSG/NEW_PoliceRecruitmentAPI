@@ -243,9 +243,9 @@ namespace PoliceRecruitmentAPI.Controllers
 
                     if (!string.IsNullOrEmpty(item.Lap1)) laps.Add(item.Lap1);
                     if (!string.IsNullOrEmpty(item.Lap2)) laps.Add(item.Lap2);
-                    //if (!string.IsNullOrEmpty(item.Lap3)) laps.Add(item.Lap3);
-                    //if (!string.IsNullOrEmpty(item.Lap4)) laps.Add(item.Lap4);
-                    //if (!string.IsNullOrEmpty(item.Lap5)) laps.Add(item.Lap5);
+                    if (!string.IsNullOrEmpty(item.Lap3)) laps.Add(item.Lap3);
+                    if (!string.IsNullOrEmpty(item.Lap4)) laps.Add(item.Lap4);
+                    if (!string.IsNullOrEmpty(item.Lap5)) laps.Add(item.Lap5);
 
                     int lapNo = 1;
 
