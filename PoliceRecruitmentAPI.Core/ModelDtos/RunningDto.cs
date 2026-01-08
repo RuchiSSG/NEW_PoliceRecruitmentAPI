@@ -23,6 +23,7 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
 		public DateTime? Date { get; set; }
         public string? Eventid { get; set; }
         public string? GrpLdrSignature { get; set; }
+        public string? Barcode { get; set; }
         public string? InchargeSignature { get; set; }
     }
 	public class RunningDto

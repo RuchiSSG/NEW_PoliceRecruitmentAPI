@@ -231,7 +231,8 @@ namespace PoliceRecruitmentAPI.Controllers
 				dataTable.Columns.Add("Date", typeof(DateTime));
 				dataTable.Columns.Add("Eventid", typeof(string));
 				dataTable.Columns.Add("GrpLdrSignature", typeof(string));
-				dataTable.Columns.Add("InchargeSignature", typeof(string));
+                dataTable.Columns.Add("Barcode", typeof(string));
+                dataTable.Columns.Add("InchargeSignature", typeof(string));
 
 				foreach (var privilage in user.runningData)
 				{
@@ -249,7 +250,8 @@ namespace PoliceRecruitmentAPI.Controllers
 						privilage.Date,
 						privilage.Eventid,
 						privilage.GrpLdrSignature,
-						privilage.InchargeSignature
+                        privilage.Barcode,
+                        privilage.InchargeSignature
                     );
 				}
 				user.runningData = null;
