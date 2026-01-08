@@ -250,6 +250,7 @@ namespace PoliceRecruitmentAPI.Core.Repository
 			parameters.Add("@Signature", user.Signature, DbType.String);
 			parameters.Add("@Eventid", user.Eventid, DbType.String);
             parameters.Add("@GrpLdrName", user.GrpLdrName, DbType.String);
+            parameters.Add("@Barcode", user.Barcode, DbType.String);
             parameters.Add("@AddGrpLdrName", user.AddGrpLdrName, DbType.String);
             parameters.Add("@GrpLdrSignature", user.GrpLdrSignature, DbType.String);
 			parameters.Add("@InchargeSignature", user.InchargeSignature, DbType.String);
