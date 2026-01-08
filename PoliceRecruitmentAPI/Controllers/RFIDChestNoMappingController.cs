@@ -5,6 +5,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 using PoliceRecruitmentAPI.Core.ModelDtos;
+using PoliceRecruitmentAPI.Services.ApiServices;
 using PoliceRecruitmentAPI.Services.Interfaces;
 using System.Data;
 using System.Text;
@@ -73,7 +74,84 @@ namespace PoliceRecruitmentAPI.Controllers
                 return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
             }
         }
+        //[HttpGet("GetChestno")]
+        //public async Task<IActionResult> GetChestno([FromQuery] RFIDChestNoMappingDto model)
+        //{
+        //    try
+        //    {
 
+        //        if (model.BaseModel == null)
+        //        {
+        //            model.BaseModel = new BaseModel();
+        //        }
+        //        model.BaseModel.OperationType = "GetchestBarcode";
+
+        //        dynamic userDetail = await _candidateService.RFIDChestNoMapping(model);
+
+        //        return userDetail;
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+        //    }
+        //}
+
+        [HttpGet("GetChestno")]
+        public async Task<IActionResult> GetChestno([FromQuery] string userid, [FromQuery] string recruitid, [FromQuery] string eventId, [FromQuery] string eventName, [FromQuery] string sessionid, [FromQuery] string ipaddress)
+        {
+
+            //ShotPutDto model = new ShotPutDto();
+            RFIDChestNoMappingDto model = null;
+            try
+            {
+                model = new RFIDChestNoMappingDto
+                {
+                    UserId = userid,
+                    RecruitId=recruitid,
+                    eventId=eventId,
+                    eventName=eventName,
+                    sessionid=sessionid,
+                    ipaddress = ipaddress,
+                    BaseModel = new BaseModel
+                    {
+                        OperationType = "GetchestBarcode"
+                    }
+                };
+
+
+                dynamic userDetail = await _candidateService.RFIDChestNoMapping(model);
+                return userDetail;
+
+            }
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
         //[HttpPost("Insert")]
         //public async Task<IActionResult> Insert([FromBody] RFIDChestNoMappingDto user)
         //{
@@ -243,9 +321,9 @@ namespace PoliceRecruitmentAPI.Controllers
 
                     if (!string.IsNullOrEmpty(item.Lap1)) laps.Add(item.Lap1);
                     if (!string.IsNullOrEmpty(item.Lap2)) laps.Add(item.Lap2);
-                    //if (!string.IsNullOrEmpty(item.Lap3)) laps.Add(item.Lap3);
-                    //if (!string.IsNullOrEmpty(item.Lap4)) laps.Add(item.Lap4);
-                    //if (!string.IsNullOrEmpty(item.Lap5)) laps.Add(item.Lap5);
+                    if (!string.IsNullOrEmpty(item.Lap3)) laps.Add(item.Lap3);
+                    if (!string.IsNullOrEmpty(item.Lap4)) laps.Add(item.Lap4);
+                    if (!string.IsNullOrEmpty(item.Lap5)) laps.Add(item.Lap5);
 
                     int lapNo = 1;
 
