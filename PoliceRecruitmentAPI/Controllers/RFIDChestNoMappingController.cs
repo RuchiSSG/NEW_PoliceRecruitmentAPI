@@ -484,6 +484,26 @@ namespace PoliceRecruitmentAPI.Controllers
             return await _candidateService.RFIDChestNoMapping(user);
         }
 
+        [HttpPost("DeleteAllMapping")]
+        public async Task<IActionResult> DeleteAllMapping([FromBody] RFIDChestNoMappingDto user)
+        {
+            try
+            {
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "DeleteAllMapping";
+                user.CreatedDate = DateTime.Now;
+                var result = await _candidateService.Get(user);
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
         public static class FileConverter
         {
             public static void ConvertCsvToXlsx(Stream inputStream, Stream outputStream)
