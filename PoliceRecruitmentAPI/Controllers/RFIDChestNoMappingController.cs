@@ -242,6 +242,27 @@ namespace PoliceRecruitmentAPI.Controllers
             }
 
         }
+
+        [HttpPost("DeleteAllMapping")]
+        public async Task<IActionResult> DeleteAllMapping([FromBody] RFIDChestNoMappingDto user)
+        {
+            try
+            {
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "DeleteAllMapping";
+                user.CreatedDate = DateTime.Now;
+                var result = await _candidateService.Get(user);
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
         [HttpPost("RIFDRunningDelete")]
         public async Task<IActionResult> RIFDRunningDelete([FromQuery] string userid, [FromQuery] string recruitid, [FromQuery] string deviceid, [FromQuery] string Location, [FromQuery] string eventName, [FromQuery] string eventId, [FromQuery] string sessionid, [FromQuery] string ipaddress)
         {
@@ -484,26 +505,26 @@ namespace PoliceRecruitmentAPI.Controllers
             return await _candidateService.RFIDChestNoMapping(user);
         }
 
-        [HttpPost("DeleteAllMapping")]
-        public async Task<IActionResult> DeleteAllMapping([FromBody] RFIDChestNoMappingDto user)
-        {
-            try
-            {
-                if (user.BaseModel == null)
-                {
-                    user.BaseModel = new BaseModel();
-                }
-                user.BaseModel.OperationType = "DeleteAllMapping";
-                user.CreatedDate = DateTime.Now;
-                var result = await _candidateService.Get(user);
-                return result;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+        //[HttpPost("DeleteAllMapping")]
+        //public async Task<IActionResult> DeleteAllMapping([FromBody] RFIDChestNoMappingDto user)
+        //{
+        //    try
+        //    {
+        //        if (user.BaseModel == null)
+        //        {
+        //            user.BaseModel = new BaseModel();
+        //        }
+        //        user.BaseModel.OperationType = "DeleteAllMapping";
+        //        user.CreatedDate = DateTime.Now;
+        //        var result = await _candidateService.Get(user);
+        //        return result;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
 
-        }
+        //}
         public static class FileConverter
         {
             public static void ConvertCsvToXlsx(Stream inputStream, Stream outputStream)
