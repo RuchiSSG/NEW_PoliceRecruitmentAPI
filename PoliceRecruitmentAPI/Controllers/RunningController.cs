@@ -162,7 +162,54 @@ namespace PoliceRecruitmentAPI.Controllers
                 };
             }
         }
-		[HttpGet("GetGroup100")]
+
+        [HttpGet("GetAllAppealData")]
+        public async Task<IActionResult> GetAllAppealData([FromQuery] RunningDto model)
+        {
+            try
+            {
+
+                if (model.BaseModel == null)
+                {
+                    model.BaseModel = new BaseModel();
+                }
+                model.BaseModel.OperationType = "GetAllAppealData";
+
+                dynamic userDetail = await _candidateService.Get(model);
+
+                return userDetail;
+
+            }
+            catch (Exception ex)
+            {
+                // Using LogErrorResponse model for cleaner code
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp = DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
+
+        [HttpGet("GetGroup100")]
 		public async Task<IActionResult> GetGroup100([FromQuery] RunningDto model)
 		{
 			try
