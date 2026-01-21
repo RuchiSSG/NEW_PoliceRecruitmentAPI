@@ -19,7 +19,9 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
         public string? ParallelReservation { get; set; }
         public string? Cast { get; set; }
         public string?  Groupid { get; set; }
-       
+        public string? Pass { get; set; }
+        public string? Fail { get; set; }
+
 
         public DateTime? SelectedDate { get; set; }
         public DateTime? FromDate { get; set; }
