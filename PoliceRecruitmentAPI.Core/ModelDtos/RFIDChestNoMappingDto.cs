@@ -11,6 +11,7 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
     {
         public BaseModel? BaseModel { get; set; }
         public string? Id { get; set; }
+        public int groupid { get; set; }
         public string? RFID { get; set; }
         public string? UserId { get; set; }
         public string? ChestNo { get; set; }
