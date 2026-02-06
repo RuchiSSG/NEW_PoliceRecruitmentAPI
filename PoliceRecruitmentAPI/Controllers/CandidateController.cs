@@ -66,6 +66,31 @@ namespace PoliceRecruitmentAPI.Controllers
             }
         }
 
+        [HttpPost("UpdateChestNo")]
+        public async Task<IActionResult> UpdateChestNo ([FromBody] CandidateDto user)
+        {
+            try
+
+            {
+                //CandidateDto user=new CandidateDto();
+                //user.CandidateID= CandidateID;
+                //user.Cast= Cast;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                
+                    user.BaseModel.OperationType = "UpdateChestNo";
+ 
+                var createduser = await _candidateService.Candidate(user);
+                return createduser;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         [HttpGet("GetCandidate")]
         public async Task<IActionResult> GetCandidate([FromQuery] CandidateDto model)
         {
