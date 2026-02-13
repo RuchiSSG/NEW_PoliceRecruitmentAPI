@@ -416,8 +416,8 @@ namespace PoliceRecruitmentAPI.Controllers
             }
 
         }
-        [HttpPost("RFIDRunningLog")]
-        public async Task<IActionResult> RFIDRunningLog(
+        [HttpPost("RFIDRunningLog400meter")]
+        public async Task<IActionResult> RFIDRunningLog400meter(
 [FromQuery] string userid,
 [FromQuery] string recruitid,
 [FromQuery] string deviceid,
@@ -497,7 +497,7 @@ namespace PoliceRecruitmentAPI.Controllers
                     eventId = eventId,
                     CreatedDate = DateTime.Now,
                     DataTable1 = lapHistory,     // ONLY THIS NOW
-                    BaseModel = new BaseModel { OperationType = "RFIDRunningLog" },
+                    BaseModel = new BaseModel { OperationType = "RFIDRunningLog400meter" },
                     sessionid = sessionid,
                     ipaddress = ipaddress
                 };
@@ -511,6 +511,100 @@ namespace PoliceRecruitmentAPI.Controllers
             }
         }
 
+        [HttpPost("RFIDRunningLog800Meter")]
+        public async Task<IActionResult> RFIDRunningLog800Meter(
+[FromQuery] string userid,
+[FromQuery] string recruitid,
+[FromQuery] string deviceid,
+[FromQuery] string Location,
+[FromQuery] string eventName,
+[FromQuery] string eventId,
+[FromBody] List<RFIDRunningLogItem> rfidData,
+[FromQuery] string sessionid,
+[FromQuery] string ipaddress)
+        {
+            try
+            {
+                if (rfidData == null || rfidData.Count == 0)
+                    return BadRequest("No RFID data provided.");
+
+                // Only Lap History Table (NEW)
+                DataTable lapHistory = new DataTable();
+                lapHistory.Columns.Add("RFID", typeof(string));
+                lapHistory.Columns.Add("eventId", typeof(string));
+                lapHistory.Columns.Add("CreatedBy", typeof(string));
+                lapHistory.Columns.Add("CreatedDate", typeof(DateTime));
+                lapHistory.Columns.Add("isactive", typeof(string));
+                lapHistory.Columns.Add("currentDateTime", typeof(string));
+                lapHistory.Columns.Add("Position", typeof(string));
+                lapHistory.Columns.Add("Status", typeof(string));
+                lapHistory.Columns.Add("DeviceName", typeof(string));
+                lapHistory.Columns.Add("RecruitId", typeof(string));
+                lapHistory.Columns.Add("LapCount", typeof(string));
+
+                foreach (var item in rfidData)
+                {
+                    // Build laps manually
+                    List<string> laps = new List<string>();
+
+                    if (!string.IsNullOrEmpty(item.Lap1)) laps.Add(item.Lap1);
+                    if (!string.IsNullOrEmpty(item.Lap2)) laps.Add(item.Lap2);
+                    //if (!string.IsNullOrEmpty(item.Lap3)) laps.Add(item.Lap3);
+                    //if (!string.IsNullOrEmpty(item.Lap4)) laps.Add(item.Lap4);
+                    //if (!string.IsNullOrEmpty(item.Lap5)) laps.Add(item.Lap5);
+
+                    int lapNo = 1;
+
+                    foreach (var lap in laps)
+                    {
+                        lapHistory.Rows.Add(
+                            item.RFIDdtagata,
+                            eventId,
+                            userid,
+                            DateTime.Now,
+                            "1",
+                            lap,
+                            Location,
+                            "0",
+                            deviceid,
+                            recruitid,
+                            lapNo.ToString()
+                        );
+
+                        lapNo++;
+                    }
+                }
+
+
+
+                // DEBUG: check row count before sending
+                Console.WriteLine("LapHistory Rows: " + lapHistory.Rows.Count);
+
+
+                // Send ONLY lapHistory
+                RFIDChestNoMappingDto user = new RFIDChestNoMappingDto
+                {
+                    UserId = userid,
+                    RecruitId = recruitid,
+                    DeviceName = deviceid,
+                    Position = Location,
+                    eventName = eventName,
+                    eventId = eventId,
+                    CreatedDate = DateTime.Now,
+                    DataTable1 = lapHistory,     // ONLY THIS NOW
+                    BaseModel = new BaseModel { OperationType = "RFIDRunningLog800Meter" },
+                    sessionid = sessionid,
+                    ipaddress = ipaddress
+                };
+
+                var result = await _candidateService.RFIDRunningLog(user);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
+        }
 
         //[HttpPost("RFIDRunningLog")]
         //public async Task<IActionResult> RFIDRunningLog([FromQuery] string userid, [FromQuery] string recruitid, [FromQuery] string deviceid, [FromQuery] string Location, [FromQuery] string eventName, [FromBody] List<RFIDRunningLogItem> rfidData, [FromQuery] string sessionid, [FromQuery] string ipaddress)
