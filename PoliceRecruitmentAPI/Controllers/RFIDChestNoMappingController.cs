@@ -75,7 +75,7 @@ namespace PoliceRecruitmentAPI.Controllers
             }
         }
         [HttpPost("devicerelese")]
-        public async Task<IActionResult> devicerelese([FromQuery] RFIDChestNoMappingDto model)
+        public async Task<IActionResult> devicerelese([FromBody] RFIDChestNoMappingDto model)
         {
             try
             {
