@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PoliceRecruitmentAPI.Core.ModelDtos;
+using PoliceRecruitmentAPI.Services.ApiServices;
 using PoliceRecruitmentAPI.Services.Interfaces;
 using System.Globalization;
 
@@ -95,7 +96,28 @@ namespace PoliceRecruitmentAPI.Controllers
             }
         }
 
+        [HttpGet("GetDeviceData")]
+        public async Task<IActionResult> GetDeviceData([FromQuery] DeviceConfigurationDto model)
+        {
+            try
+            {
 
+                if (model.BaseModel == null)
+                {
+                    model.BaseModel = new BaseModel();
+                }
+                model.BaseModel.OperationType = "GetDeviceData";
+
+                dynamic userDetail = await _deviceConfigurationService.Get(model);
+
+                return userDetail;
+
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new { message = ex.Message }) { StatusCode = StatusCodes.Status500InternalServerError };
+            }
+        }
         //[HttpPost("Insert")]
         //public async Task<IActionResult> Insert([FromBody] DeviceConfigurationDto user)
         //{
