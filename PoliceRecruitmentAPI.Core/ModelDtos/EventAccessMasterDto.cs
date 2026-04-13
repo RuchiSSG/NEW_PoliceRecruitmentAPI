@@ -14,6 +14,7 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
         public Guid? Id { get; set; }
         public string? CategoryName { get; set; }
         public string? CategoryId { get; set; }
+        public string? roleid { get; set; }
         public string? Isactive { get; set; }
         public string? Is_Admin { get; set; }
         public string? RecruitId { get; set; }
