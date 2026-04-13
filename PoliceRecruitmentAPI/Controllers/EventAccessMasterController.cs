@@ -222,6 +222,7 @@ namespace PoliceRecruitmentAPI.Controllers
                 user.Createddate = DateTime.Now;
                 user.Updateddate = DateTime.Now;
                 DataTable dataTable = new DataTable();
+                dataTable.Columns.Add("RoleId", typeof(string));
                 dataTable.Columns.Add("Menuid", typeof(string));
                 dataTable.Columns.Add("addaccess", typeof(string));
                 dataTable.Columns.Add("editaccess", typeof(string));
@@ -237,6 +238,7 @@ namespace PoliceRecruitmentAPI.Controllers
                     foreach (var privilage in user.Privilage)
                     {
                         dataTable.Rows.Add(
+                            privilage.a_roleid,
                             privilage.a_menuid,
                             privilage.addaccess,
                             privilage.editaccess,

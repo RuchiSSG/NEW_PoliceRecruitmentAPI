@@ -130,7 +130,6 @@ namespace PoliceRecruitmentAPI.Core.Repository
             parameters.Add("@Id", user.Id, DbType.Guid);
             parameters.Add("@CategoryId", user.CategoryId, DbType.String);
             parameters.Add("@CategoryName", user.CategoryName, DbType.String);
-            parameters.Add("@roleid", user.roleid, DbType.String);
             parameters.Add("@Isactive", user.Isactive, DbType.String);
             parameters.Add("@Is_Admin", user.Is_Admin, DbType.String);
             parameters.Add("@Recruitid", user.RecruitId, DbType.String);
