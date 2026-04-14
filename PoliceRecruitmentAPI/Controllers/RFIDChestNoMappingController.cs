@@ -448,7 +448,7 @@ namespace PoliceRecruitmentAPI.Controllers
 [FromQuery] string eventId,
 [FromBody] List<RFIDRunningLogItem> rfidData,
 [FromQuery] string sessionid,
-[FromQuery] string ipaddress)
+[FromQuery] string ipaddress, [FromQuery] string categoryName, [FromQuery] string categoryId)
         {
             try
             {
@@ -468,6 +468,8 @@ namespace PoliceRecruitmentAPI.Controllers
                 lapHistory.Columns.Add("DeviceName", typeof(string));
                 lapHistory.Columns.Add("RecruitId", typeof(string));
                 lapHistory.Columns.Add("LapCount", typeof(string));
+                lapHistory.Columns.Add("CategoryId", typeof(string));
+                lapHistory.Columns.Add("CategoryName", typeof(string));
 
                 foreach (var item in rfidData)
                 {
@@ -521,7 +523,9 @@ namespace PoliceRecruitmentAPI.Controllers
                     DataTable1 = lapHistory,     // ONLY THIS NOW
                     BaseModel = new BaseModel { OperationType = "RFIDRunningLog400meter" },
                     sessionid = sessionid,
-                    ipaddress = ipaddress
+                    ipaddress = ipaddress,
+                    categoryId = categoryId,
+                    categoryName = categoryName
                 };
 
                 var result = await _candidateService.RFIDRunningLog(user);
@@ -543,7 +547,7 @@ namespace PoliceRecruitmentAPI.Controllers
 [FromQuery] string eventId,
 [FromBody] List<RFIDRunningLogItem> rfidData,
 [FromQuery] string sessionid,
-[FromQuery] string ipaddress)
+[FromQuery] string ipaddress, [FromQuery] string categoryId , [FromQuery] string categoryName)
         {
             try
             {
@@ -563,6 +567,8 @@ namespace PoliceRecruitmentAPI.Controllers
                 lapHistory.Columns.Add("DeviceName", typeof(string));
                 lapHistory.Columns.Add("RecruitId", typeof(string));
                 lapHistory.Columns.Add("LapCount", typeof(string));
+                lapHistory.Columns.Add("CategoryId", typeof(string));
+                lapHistory.Columns.Add("CategoryName", typeof(string));
 
                 foreach (var item in rfidData)
                 {
@@ -616,7 +622,9 @@ namespace PoliceRecruitmentAPI.Controllers
                     DataTable1 = lapHistory,     // ONLY THIS NOW
                     BaseModel = new BaseModel { OperationType = "RFIDRunningLog800Meter" },
                     sessionid = sessionid,
-                    ipaddress = ipaddress
+                    ipaddress = ipaddress,
+                    categoryId = categoryId,
+                    categoryName = categoryName
                 };
 
                 var result = await _candidateService.RFIDRunningLog(user);

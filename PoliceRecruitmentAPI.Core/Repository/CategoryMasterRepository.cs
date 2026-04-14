@@ -39,7 +39,9 @@ namespace PoliceRecruitmentAPI.Core.Repository
                     {
                         Outcome = outcome,
                         Data = Model,
-                        UserId = model.UserId
+                        UserId = model.UserId,
+                        IpAddress=model.ipaddress,
+                        SessionId=model.sessionid
                     };
 
                     if (outcomeId == 1)

@@ -138,7 +138,73 @@ namespace PoliceRecruitmentAPI.Controllers
                 };
             }
         }
+        [HttpGet("GetCategory")]
+        public async Task<IActionResult> GetCategory([FromQuery] string userid, [FromQuery] string recruitid, [FromQuery] string sessionid, [FromQuery] string ipaddress)
+        {
 
+            CategoryMasterDto model = new CategoryMasterDto();
+
+            model.recConfId=recruitid;
+            model.UserId=userid;
+            model.ipaddress=ipaddress;
+            model.sessionid=sessionid;
+
+
+            try
+            {
+                if (sessionid == null)
+                {
+                    sessionid = "null";
+                    ipaddress= "null";
+                }
+
+                model = new CategoryMasterDto
+                {
+                    UserId = userid,
+                    recConfId = recruitid,
+                    sessionid=sessionid,
+                    ipaddress=ipaddress,
+
+                    // categoryId = categoryid,
+                    BaseModel = new BaseModel
+                    {
+                        OperationType = "GetAll"
+                    }
+                };
+
+                dynamic userDetail = await _categoryMasterService.Category(model);
+                return userDetail;
+
+            }
+            catch (Exception ex)
+            {
+                // Construct detailed error response
+                var errorResponse = new LogErrorResponse
+                {
+                    ErrorId = Guid.NewGuid().ToString("N"),
+                    Timestamp =DateTime.Now,
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace,
+                    OperationType = model?.BaseModel?.OperationType ?? "Unknown"
+                };
+
+                // Log error details
+                _logger.LogError(ex, "{SeparatorLine}\n"+"Error ID: {ErrorId}\t" +"DateTime: {FormattedTimestamp}\n" +"Error Message: {Message}\n" +"Stack Trace: {StackTrace}\n"+"{SeparatorLine}",
+                     LogErrorResponse.SEPARATOR_LINE,
+                     errorResponse.ErrorId,
+                     errorResponse.FormattedTimestamp,
+                     errorResponse.Message,
+                     errorResponse.StackTrace,
+                     LogErrorResponse.SEPARATOR_LINE
+                 );
+
+                // Return structured error response
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+        }
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll([FromQuery] string userid, [FromQuery] string recConfId)
         {

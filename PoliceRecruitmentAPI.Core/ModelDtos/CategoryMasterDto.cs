@@ -16,8 +16,9 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
         public string? UserId { get; set; }
         public DateTime? createdDate { get; set; }
         public DateTime? updatedDate { get; set; }
-      
-        
+
+        public string? sessionid { get; set; }
+        public string? ipaddress { get; set; }
         public string? IsActive { get; set; }
         public DataTable? DataTable { get; set; }
 
