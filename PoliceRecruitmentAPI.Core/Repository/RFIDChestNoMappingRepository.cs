@@ -243,6 +243,8 @@ namespace PoliceRecruitmentAPI.Core.Repository
             parameters.Add("@groupid", user.groupid, DbType.Int32);
             parameters.Add("@CandidateID", user.CandidateID, DbType.String);
             parameters.Add("@eventId", user.eventId, DbType.String);
+            parameters.Add("@categoryname", user.categoryName, DbType.String);
+            parameters.Add("@categoryid", user.categoryId, DbType.String);
             parameters.Add("@Position", user.Position, DbType.String);
             parameters.Add("@DeviceName", user.DeviceName, DbType.String);
             parameters.Add("@RecruitId", user.RecruitId, DbType.String);
