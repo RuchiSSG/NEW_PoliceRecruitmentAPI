@@ -50,6 +50,7 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
         public string? Barcode { get; set; }
         public string? GrpLdrSignature { get; set; }
         public string? InchargeSignature { get; set; }
+        public string? CategoryId { get; set; }
         public string? RecruitId { get; set; }
 
 	}

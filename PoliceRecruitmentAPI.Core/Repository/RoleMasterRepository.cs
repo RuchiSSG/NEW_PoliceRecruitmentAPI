@@ -41,22 +41,30 @@ namespace PoliceRecruitmentAPI.Core.Repository
 						UserId = model.UserId
 
 					};
-					if (outcomeId == 1)
-					{
-						return new ObjectResult(result)
-						{
-							StatusCode = 200
-						};
-					}
-					else
-					{
-						return new ObjectResult(result)
-						{
-							StatusCode = 400
-						};
-					}
-				}
-				catch (Exception)
+                    if (outcomeId == 1)
+                    {
+                        return new ObjectResult(result)
+                        {
+                            StatusCode = 200
+                        };
+                    }
+                    else if (outcomeId == 2)
+                    {
+
+                        return new ObjectResult(result)
+                        {
+                            StatusCode = 409
+                        };
+                    }
+                    else
+                    {
+                        return new ObjectResult(result)
+                        {
+                            StatusCode = 400
+                        };
+                    }
+                }
+                catch (Exception)
 				{
 					throw;
 				}
@@ -86,22 +94,30 @@ namespace PoliceRecruitmentAPI.Core.Repository
 
 
 					};
-					if (outcomeId == 1)
-					{
-						return new ObjectResult(result)
-						{
-							StatusCode = 200
-						};
-					}
-					else
-					{
-						return new ObjectResult(result)
-						{
-							StatusCode = 400
-						};
-					}
-				}
-				catch (Exception)
+                    if (outcomeId == 1)
+                    {
+                        return new ObjectResult(result)
+                        {
+                            StatusCode = 200
+                        };
+                    }
+                    else if (outcomeId == 2)
+                    {
+
+                        return new ObjectResult(result)
+                        {
+                            StatusCode = 409
+                        };
+                    }
+                    else
+                    {
+                        return new ObjectResult(result)
+                        {
+                            StatusCode = 400
+                        };
+                    }
+                }
+                catch (Exception)
 				{
 					throw;
 				}
