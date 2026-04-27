@@ -25,22 +25,14 @@ builder.Services.AddSession(options => {
     options.Cookie.IsEssential = true;
 });
 
-builder.Services.AddCors(o => o.AddPolicy("default", builder =>
-{
-    builder.AllowAnyOrigin()
-           .AllowAnyMethod()
-           .AllowAnyHeader();
-}));
-
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: "AllowOrigin",
-        builder =>
-        {
-            builder.WithOrigins("https://localhost:44351", "http://localhost:3000", "https://eohc.in")
-                                .AllowAnyHeader()
-                                .AllowAnyMethod();
-        });
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
 });
 
 //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -61,7 +53,6 @@ if (builder.Environment.IsDevelopment())
     builder.Services.AddDbContext<DatabaseContext>(opts => opts.UseSqlServer(builder.Configuration["ConnectionStrings:dev"]));
 }
 builder.Services.AddDbContext<DatabaseContext>(opts => opts.UseSqlServer(builder.Configuration["ConnectionStrings:prod"]));
-
 builder.Services.AddScoped<IAuthService, AuthService>().AddScoped<AuthRepository>();
 builder.Services.AddScoped<ICandidateService, CandidateService>().AddScoped<CandidateRepository>();
 
@@ -106,21 +97,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGet("/", () => "API is running...");
 
-app.UseCors(builder =>
-{
-    builder
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader();
-});
-app.UseCors("AllowOrigin");
+app.UseCors("AllowAll");
 
-
+//app.Urls.Clear();
+//app.Urls.Add("http://0.0.0.0:5000");
 app.Run();
