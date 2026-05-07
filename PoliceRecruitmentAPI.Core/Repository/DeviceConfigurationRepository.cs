@@ -108,6 +108,10 @@ namespace PoliceRecruitmentAPI.Core.Repository
                     {
                         return new ObjectResult(result) { StatusCode = 200 };
                     }
+                    else if(outcomeId == 2)
+                    {
+                        return new ObjectResult(result); //{ StatusCode = 201 };
+                    }
                     else
                     {
                         return new ObjectResult(result) { StatusCode = 400 };
