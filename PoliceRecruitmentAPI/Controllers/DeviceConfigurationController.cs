@@ -148,7 +148,7 @@ namespace PoliceRecruitmentAPI.Controllers
 
 
         [HttpGet("Get")]
-        public async Task<IActionResult> Get([FromQuery] string userid, [FromQuery] string deviceid, [FromQuery] string sessionid, [FromQuery] string ipaddress)
+        public async Task<IActionResult> Get([FromQuery] string userid, [FromQuery] string deviceid, [FromQuery] string recruitid, [FromQuery] string sessionid, [FromQuery] string ipaddress)
         {
 
             //ShotPutDto model = new ShotPutDto();
@@ -159,6 +159,7 @@ namespace PoliceRecruitmentAPI.Controllers
                 {
                     UserId = userid,
                     DeviceId=deviceid,
+                    RecruitId = recruitid,
                     sessionid=sessionid,
                     ipaddress = ipaddress,
                     BaseModel = new BaseModel
