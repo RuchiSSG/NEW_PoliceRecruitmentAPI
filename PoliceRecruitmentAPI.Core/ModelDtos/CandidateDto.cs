@@ -62,6 +62,7 @@ namespace PoliceRecruitmentAPI.Core.ModelDtos
         public string? Category { get; set; }
         public string?  CategoryId { get; set; }
         public string? CastId { get; set; }
+        public string? Searchcandidate { get; set; }
         public DataTable? DataTable { get; set; }
         public DataTable? DataTable1 { get; set; }
         public DataTable? DataTable2 { get; set; }

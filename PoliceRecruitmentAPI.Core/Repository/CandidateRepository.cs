@@ -369,7 +369,8 @@ namespace PoliceRecruitmentAPI.Core.Repository
             parameters.Add("@EventId", user.EventId, DbType.String);
             parameters.Add("@Id", user.Id, DbType.String);
             parameters.Add("@CastId", user.CastId, DbType.String);
-             if (user.DataTable != null && user.DataTable.Rows.Count > 0)
+            parameters.Add("@Searchcandidate", user.Searchcandidate, DbType.String);
+            if (user.DataTable != null && user.DataTable.Rows.Count > 0)
             {
                 parameters.Add("@Candidate", user.DataTable.AsTableValuedParameter("[dbo].[Candidate]"));
             }
